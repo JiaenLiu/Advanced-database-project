@@ -117,7 +117,7 @@ create table performance_
     perf_begin date, -- The timestamp string like 20/09/2022 19:30:00
     perf_end date, -- The timestamp string
     -- perf_name varchar2(20),
-    reserved_sits number,
+    reserved_sits number default 0,
     room_id number not null,
     -- thea_id number not null,
     show_id number not null,
@@ -271,6 +271,14 @@ desc transactions;
 -- We make all the meta-table (show, performance and actor) into class and object. 
 -- Using these objects to create the table of them and store them in the transaction table.
 
+-- Create the table of refund
+create table refund (
+    sales_id number,
+    sales_price number,
+    constraint fk_sales_id foreign key (sales_id) references sales(sales_id)
+);
+
+
 -- Tasks:
 -- 1. Fill the tables with some test data
 
@@ -335,21 +343,21 @@ insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_
 insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id) values (10, 'donor10', 'type1', 100000, 5, 12, 5);
 
 -- Test data for performance_
-insert into performance_(perf_id, perf_begin, perf_end, reserved_sits, room_id,show_id, discount) values (1, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 100, 1, 1, 0);
-insert into performance_(perf_id, perf_begin, perf_end, reserved_sits, room_id,show_id, discount) values (2, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 100, 2, 1, 0);
-insert into performance_(perf_id, perf_begin, perf_end, reserved_sits, room_id,show_id, discount) values (3, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 100, 3, 1, 0);
-insert into performance_(perf_id, perf_begin, perf_end, reserved_sits, room_id,show_id, discount) values (4, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 80, 4, 1, 1);
-insert into performance_(perf_id, perf_begin, perf_end, reserved_sits, room_id,show_id, discount) values (5, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 100, 5, 2, 1);
-insert into performance_(perf_id, perf_begin, perf_end, reserved_sits, room_id,show_id, discount) values (6, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 75, 6, 3, 1);
-insert into performance_(perf_id, perf_begin, perf_end, reserved_sits, room_id,show_id, discount) values (7, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 100, 7, 4, 0);
-insert into performance_(perf_id, perf_begin, perf_end, reserved_sits, room_id,show_id, discount) values (8, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 90, 8, 5,0 );
-insert into performance_(perf_id, perf_begin, perf_end, reserved_sits, room_id,show_id, discount) values (9, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 100, 9, 6,1);
-insert into performance_(perf_id, perf_begin, perf_end, reserved_sits, room_id,show_id, discount) values (10, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 100, 10, 7,0);
-insert into performance_(perf_id, perf_begin, perf_end, reserved_sits, room_id,show_id, discount) values (11, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 90, 11, 8,1);
-insert into performance_(perf_id, perf_begin, perf_end, reserved_sits, room_id,show_id, discount) values (12, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 84, 12, 9,0);
-insert into performance_(perf_id, perf_begin, perf_end, reserved_sits, room_id,show_id, discount) values (13, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 72, 13, 10,0);
-insert into performance_(perf_id, perf_begin, perf_end, reserved_sits, room_id,show_id, discount) values (14, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 89, 14, 11,1);
-insert into performance_(perf_id, perf_begin, perf_end, reserved_sits, room_id,show_id, discount) values (15, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 71, 15, 12,1);
+insert into performance_(perf_id, perf_begin, perf_end, room_id,show_id, discount) values (1, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 1, 1, 0);
+insert into performance_(perf_id, perf_begin, perf_end, room_id,show_id, discount) values (2, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 2, 1, 0);
+insert into performance_(perf_id, perf_begin, perf_end, room_id,show_id, discount) values (3, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 3, 1, 0);
+insert into performance_(perf_id, perf_begin, perf_end, room_id,show_id, discount) values (4, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 4, 1, 1);
+insert into performance_(perf_id, perf_begin, perf_end, room_id,show_id, discount) values (5, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 5, 2, 1);
+insert into performance_(perf_id, perf_begin, perf_end, room_id,show_id, discount) values (6, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 6, 3, 1);
+insert into performance_(perf_id, perf_begin, perf_end, room_id,show_id, discount) values (7, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 7, 4, 0);
+insert into performance_(perf_id, perf_begin, perf_end, room_id,show_id, discount) values (8, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 8, 5,0 );
+insert into performance_(perf_id, perf_begin, perf_end, room_id,show_id, discount) values (9, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 9, 6,1);
+insert into performance_(perf_id, perf_begin, perf_end, room_id,show_id, discount) values (10, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 10, 7,0);
+insert into performance_(perf_id, perf_begin, perf_end, room_id,show_id, discount) values (11, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 11, 8,1);
+insert into performance_(perf_id, perf_begin, perf_end, room_id,show_id, discount) values (12, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 12, 9,0);
+insert into performance_(perf_id, perf_begin, perf_end, room_id,show_id, discount) values (13, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 13, 10,0);
+insert into performance_(perf_id, perf_begin, perf_end, room_id,show_id, discount) values (14, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 14, 11,1);
+insert into performance_(perf_id, perf_begin, perf_end, room_id,show_id, discount) values (15, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 15, 12,1);
 
 -- Test data for actor
 insert into actor (act_id, act_name, act_price, gender, act_age, act_balance) values(1, 'actor1', 10000, 'M', 20, 100000);
@@ -536,7 +544,6 @@ insert into transactions (from_comp_id,to_comp_id, to_act_id, thea_id, amount_mo
 select * from company;
 
 -- 5. Create the trigger to check the reserved sit is not over the capacity of the room
-
 -- Jin
 
 
@@ -549,9 +556,24 @@ select * from company;
 
 -- 9. And more to be discussed.
 
--- 10. Create the trigger to auto generate the real price of the ticket
+-- Create the trigger to auto generate the total price of a sale
+create or replace trigger calculate_sales_price
+before insert or update on sales
+for each row
 
--- Jin
+declare
+    ticket_price number;
+    
+begin
+    select ticket_s_price into ticket_price
+    from ticket
+    where ticket_type_id = :new.ticket_type_id;
+    
+    -- we multiply the ticket price by the number of tickets bought
+    :new.sales_price := :new.ticket_num * ticket_price;
+end;
+/
+
 
 -- TODO
 
