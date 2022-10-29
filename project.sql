@@ -82,7 +82,7 @@ create table grant_
     constraint nn_total_amount check(total_amount is not null),
     constraint nn_total_period_year check (total_period_year is not null),
     constraint nn_period_time_month check (period_time_month is not null),
-    constraint fk_thea foreign key (thea_id) references theater(thea_id),
+    constraint fk_thea foreign key (thea_id) references theater(thea_id)
     --CONSTRAINT fk_g_comp_id  foreign key (comp_id) references company(comp_id)
 );
 
@@ -101,7 +101,7 @@ create table room
     constraint nn_room_capacity check (room_capacity is not null),
     constraint nn_room_cost check (room_cost is not null),
     constraint nn_r_thea_id check (thea_id is not null),
-    constraint fk_r_thea_id foreign key (thea_id) references theater(thea_id),
+    constraint fk_r_thea_id foreign key (thea_id) references theater(thea_id)
     -- constraint fk_r_comp_id foreign key (comp_id) references company(comp_id)
 );
 
