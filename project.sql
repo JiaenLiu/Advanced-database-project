@@ -605,11 +605,25 @@ end;
 /
 
 
--- 7. Create the trigger to check the sales date that is not over the performance date.
+-- Create the trigger to check the sales date that is not over the performance date.
+create or replace trigger over_deadline
+before insert or update on sales
+for each row
 
--- Jin
-
--- 8. Create the trigger to check that sales number is lower the reserved sit.
+declare 
+    perf_time date;
+    
+begin
+    select perf.perf_begin into perf_time
+    from performance_ perf, ticket tick
+    where perf.perf_id = tick.perf_id
+    and tick.ticket_type_id = :new.ticket_type_id;
+    
+    if :new.sales_time >= perf_time then
+        raise_application_error(-20010, 'The show has already begun or it is over.');
+    end if;
+end;
+/
 
 -- 9. And more to be discussed.
 
