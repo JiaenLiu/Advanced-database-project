@@ -429,20 +429,45 @@ for each row
 
 declare
     ticket_price number;
+    has_discount number;
+    sits_sold number;
+    cap_room number;
+    perf_date date;
     
 begin
-    select ticket_s_price into ticket_price
-    from ticket
-    where ticket_type_id = :new.ticket_type_id;
+    select t1.ticket_s_price, p1.discount, p1.reserved_sits, r.room_capacity, p1.perf_begin into ticket_price, has_discount, sits_sold, cap_room, perf_date
+    from ticket t1, performance_ p1, room r
+    where t1.ticket_type_id = :new.ticket_type_id and t1.perf_id = p1.perf_id and p1.room_id = r.room_id;
     
-    -- we multiply the ticket price by the number of tickets bought
-    :new.sales_price := :new.ticket_num * ticket_price;
+    if has_discount = 1 then
+        if :new.sales_time <= perf_date - 15 then
+            :new.sales_price := (:new.ticket_num * ticket_price) * 0.80;
+        end if;
+        
+        if to_char(:new.sales_time, 'year') = to_char(perf_date, 'year') and to_char(:new.sales_time, 'month') = to_char(perf_date, 'month') and to_char(perf_date, 'day') = to_char(:new.sales_time, 'day') and sits_sold <= 0.50 * cap_room then
+            :new.sales_price := (:new.ticket_num * ticket_price) * 0.70;
+        end if;
+    
+        if to_char(:new.sales_time, 'year') = to_char(perf_date, 'year') and to_char(:new.sales_time, 'month') = to_char(perf_date, 'month') and to_char(perf_date, 'day') = to_char(:new.sales_time, 'day') and sits_sold <= 0.30 * cap_room then
+            :new.sales_price := (:new.ticket_num * ticket_price) * 0.50;
+        end if;
+        
+        if :new.sales_time > perf_date - 15 and :new.sales_time <= perf_date - 1 then
+            :new.sales_price := :new.ticket_num * ticket_price;
+        end if;
+    
+    else
+        :new.sales_price := :new.ticket_num * ticket_price;
+    end if;
 end;
 /
 --Test the trigger
 delete from sales; --initially the price was at 0 for every sale
-insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (1, 1, 10, '18/09/2022 19:30:00');
-insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (2, 2, 10, '18/09/2022 19:30:00');
+insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (1, 1, 10, '18/09/2022 19:30:00'); --normal price, no discount for show 
+insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (2, 10, 10, '18/09/2022 19:30:00'); --normal price, discount for show
+insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (3, 10, 10, '01/09/2022 19:30:00'); --20% discount
+insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (4, 10, 20, '20/09/2022 12:30:00'); --50% discount
+insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (5, 10, 5, '20/09/2022 14:30:00'); --30% discount
 
 -- Create the trigger to check the conflict of the room usage
 create or replace trigger room_usage_check 
@@ -580,7 +605,7 @@ select * from company;
 
 -- Create the trigger to check the reserved sits of the performance Enough sits to reserve and do not over the capacity of the room.
 create or replace trigger count_reserved_sits
-after insert or delete on sales
+before insert or delete on sales
 for each row
 
 declare
