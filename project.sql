@@ -780,9 +780,51 @@ end;
 
 create or replace function check_actor_free (perf_id number, actor_id number) return number
 
--- 3. Create the function to calculate the free sits for a performance.
+-- Create the function to calculate the free sits for a performance.
+create or replace function sits_left(perf_id_par number)
+return number is
+    sits number := 0;
+begin 
+    select (r.room_capacity - perf.reserved_sits) into sits
+    from performance_ perf, room r
+    where perf.perf_id = perf_id_par and r.room_id = perf.room_id;
+    
+    return sits;
+end;
+/
 
--- 4. Create the function to calculate the total sales for a performance.
+--test the function
+DECLARE 
+   sits number; 
+BEGIN 
+   sits := sits_left(5); 
+   dbms_output.put_line('Sits left in performance n° 5 : ' || sits); 
+END; 
+/
+
+
+-- Create the function to calculate the total sales for a performance.
+create or replace function tt_sales_perf(perf_id_par number)
+return number is
+    tt_sales number := 0;
+begin 
+    select sum(s.sales_price) into tt_sales
+    from ticket tick, sales s
+    where tick.perf_id = perf_id_par and s.ticket_type_id = tick.ticket_type_id;
+    
+    return tt_sales;
+end;
+/
+
+--test the function
+DECLARE 
+   tt_sales number; 
+BEGIN 
+   tt_sales := tt_sales_perf(5); 
+   dbms_output.put_line('tt sales of performance n° 5 : ' || tt_sales); 
+END; 
+/
+
 
 -- 5. Create the function to calculate the total sales for a theater.
 
