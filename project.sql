@@ -412,14 +412,23 @@ insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (2, 
 -- TODO 
 
 -- Create the trigger to constraint one actor can only be in one performance at the same time
-create trigger actor_in_one_performance
+create or replace trigger actor_in_one_performance
 before insert or update on staff_list
 for each row
+declare
+    var_same_begin_time_count number;
+    var_start_time date;
+    var_end_time date;
 begin
-    if new.act_id in (select act_id from staff_list where perf_id = new.perf_id) then
-        signal sqlstate '45000' set message_text = 'One actor can only be in one performance at the same time';
+    select perf_begin, perf_end into var_start_time, var_end_time from performance where perf_id = :new.perf_id;
+    select count(*) into var_same_begin_time_count from performance_ where perf_begin between var_start_time and var_end_time; 
+    if var_same_begin_time_count > 0 then
+        raise_application_error(-20001, 'The actor is already in another performance at the same time');
     end if;
 end;
+
+-- Test the trigger
+insert into staff_list (perf_id, act_id) values (1, 1);
 
 
 -- Create the trigger to auto generate the total price of a sale
@@ -775,10 +784,74 @@ begin
     check_all_actor_num;
 end;
 
+-- Create the trigger to check whether a actor is already in a performance.
+
 
 -- 2. Create the function to calculate which actor is free for the previous positions.
 
-create or replace function check_actor_free (perf_id number, actor_id number) return number
+-- perf_id is the performance id which the actor is going to be assigned to.
+create or replace function check_actor_free (perf_id number, actor_id number) 
+-- This function returns whether the actor is free for the previous positions.
+return number is 
+    var_perf_id number;
+    var_actor_id number;
+    var_start_time date;
+    var_end_time date;
+    var_start_time_a date;
+    var_to_return number;
+    var_count number;
+begin
+    var_perf_id := perf_id;
+    var_actor_id := actor_id;
+    var_to_return := 0;
+    select perf_begin, perf_end into var_start_time, var_end_time from performance_ where perf_id = var_perf_id;
+    for i in (select perf_id from staff_list where ACT_ID = var_actor_id) loop
+        select perf_begin into var_start_time_a from performance_ where perf_id = i.perf_id;
+        if var_start_time_a between var_start_time and var_end_time then
+            var_to_return := 0;
+        else 
+            var_to_return := 1;
+        end if;
+        if var_to_return = 1 then 
+            return var_to_return;
+        end if;
+    end loop;
+    select count(*) into var_count from staff_list where ACT_ID = actor_id;
+    if var_count = 0  then
+        var_to_return := 1;
+    end if;
+    return var_to_return;
+end;
+
+begin
+    dbms_output.put_line(check_actor_free(5,1));
+end;
+
+-- Create the function to check which actor is free for the previous positions.
+
+create or replace procedure check_all_actor_free(perf_id number)
+is 
+    var_actor_id number;
+begin 
+    for i in (select ACT_ID from actor) loop
+        var_actor_id := i.ACT_ID;
+        if check_actor_free(perf_id, var_actor_id) = 0 then
+            dbms_output.put_line('The actor ' || var_actor_id || ' is not free for the previous positions.');
+        else 
+            dbms_output.put_line('The actor ' || var_actor_id || ' is free for this positions.');
+        end if;
+    end loop;
+end;
+-- Test the procedure & function of checking whether an actor is free for the previous positions.
+begin
+    check_all_actor_free(5);
+end;
+
+insert into actor (act_id, act_name, act_price, gender, act_age, act_balance) values(14, 'actor14', 29000, 'F', 30, 100000);
+
+begin
+    check_all_actor_free(5);
+end;
 
 -- 3. Create the function to calculate the free sits for a performance.
 
