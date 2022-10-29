@@ -695,6 +695,8 @@ insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (7, 
 
 -- 9. And more to be discussed.
 
+-- Create the triggers
+
 
 -- TODO
 
@@ -731,7 +733,52 @@ insert into sales (sales_id, ticket_type_id, ticket_num,sales_price, sales_time)
 -- Functions 
 -- 1. Create the function to calculate whether a performance do not have enough actors.
 
--- 2. Create the function to calculate which actor is free for the previous position.
+create or replace function check_actor_num (perf_id number) return number
+is
+    var_perf_id number;
+    var_show_id number;
+    var_actor_num number;
+    var_actor_num_needed number;
+begin
+    var_perf_id := perf_id;
+    select show_id into var_show_id from performance_ where perf_id = var_perf_id;
+    select count(*) into var_actor_num from staff_list where perf_id = var_perf_id;
+    select nb_actors into var_actor_num_needed from show where show_id = var_show_id;
+    return var_actor_num_needed - var_actor_num;
+end;
+
+-- Test the function
+begin 
+    dbms_output.put_line(check_actor_num(1)); -- 0
+end;
+
+begin 
+    dbms_output.put_line(check_actor_num(5)); -- 2
+end;-- 0
+
+-- Create the procedure to check whether all performances do not have enough actors.
+
+create or replace procedure check_all_actor_num
+is 
+    var_perf_id number;
+begin 
+    for i in (select perf_id from performance_) loop
+        var_perf_id := i.perf_id;
+        if check_actor_num(var_perf_id) > 0 then
+            dbms_output.put_line('The performance ' || var_perf_id || ' does not have enough actors. Needs ' || check_actor_num(var_perf_id) || ' more.');
+        end if;
+    end loop;
+end;
+
+-- Test the procedure
+begin 
+    check_all_actor_num;
+end;
+
+
+-- 2. Create the function to calculate which actor is free for the previous positions.
+
+create or replace function check_actor_free (perf_id number, actor_id number) return number
 
 -- 3. Create the function to calculate the free sits for a performance.
 
