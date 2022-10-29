@@ -34,7 +34,6 @@ desc company;
 
 -- Create the show table the relationship between company and show is 1 to n
 -- gz means greater than zero.
-drop table show;
 create table show (
     show_id number,
     show_name varchar2(30),
@@ -44,15 +43,14 @@ create table show (
     comp_id number,
     constraint pk_show_id primary key(show_id),
     constraint nn_show_cost check(show_cost is not null),
-    -- constraint nn_show_name check(show_name is not null),
-    -- constraint nn_show_genre check(show_genre is not null),
     constraint nn_comp_id check (comp_id is not null),
     constraint gz_show_cost check(show_cost > 0),
     constraint fk_comp foreign key (comp_id) references company(comp_id)
 );
 
 desc show;
--- Create the table of theather
+
+-- Create the table of theater
 create table theater 
 (
     thea_id number,
@@ -65,6 +63,7 @@ create table theater
 );
 
 desc theater;
+
 -- Create the table of grant
 -- The unit of donation is euro
 create table grant_ 
@@ -76,18 +75,16 @@ create table grant_
     total_period_year number,
     period_time_month number,
     thea_id number,
-    -- comp_id number,
     constraint pk_grand_id primary key(grant_id),
     constraint nn_total_amount check(total_amount is not null),
     constraint nn_total_period_year check (total_period_year is not null),
     constraint nn_period_time_month check (period_time_month is not null),
     constraint fk_thea foreign key (thea_id) references theater(thea_id)
-    --CONSTRAINT fk_g_comp_id  foreign key (comp_id) references company(comp_id)
 );
 
 desc grant_;
--- Create table room
 
+-- Create table room
 create table room 
 (
     room_id number,
@@ -95,13 +92,11 @@ create table room
     room_capacity number,
     room_cost number,
     thea_id number not null,
-    -- comp_id number,
     constraint pk_room_id primary key(room_id),
     constraint nn_room_capacity check (room_capacity is not null),
     constraint nn_room_cost check (room_cost is not null),
     constraint nn_r_thea_id check (thea_id is not null),
     constraint fk_r_thea_id foreign key (thea_id) references theater(thea_id)
-    -- constraint fk_r_comp_id foreign key (comp_id) references company(comp_id)
 );
 
 desc room;
@@ -115,11 +110,9 @@ create table performance_
 (
     perf_id number,
     perf_begin date, -- The timestamp string like 20/09/2022 19:30:00
-    perf_end date, -- The timestamp string
-    -- perf_name varchar2(20),
+    perf_end date, 
     reserved_sits number default 0,
     room_id number not null,
-    -- thea_id number not null,
     show_id number not null,
     discount number(1),
     constraint pk_perf_id primary key(perf_id),
@@ -128,26 +121,12 @@ create table performance_
     constraint nn_reserved_sits check (reserved_sits is not null),
     constraint nn_discount check (discount is not null),
     constraint fk_p_room_id foreign key (room_id) references room(room_id),
-    --constraint fk_p_thea_id foreign key (thea_id) references theater(thea_id),
     constraint fk_p_show_id foreign key (show_id) references show(show_id)
 ); 
 
 desc performance_;
 
--- The schedual table of the performances
--- !!!Need to be implemented and discussed
--- create table schedual 
--- (
---     perf_id number,
---     room_id number,
---     thea_id number,
---     constraint pk_schedual primary key (perf_id,room_id)
--- );
--- desc schedual;
-
-
--- Whether we need that stracture? Need to discuss.
--- Create the table of actor(actress)
+-- Create the table of actor
 drop table actor;
 
 create table actor 
@@ -158,15 +137,11 @@ create table actor
     gender varchar2(10),
     act_age number,
     act_balance number,
-    -- perf_id number not null,
     constraint pk_act_id primary key(act_id),
     constraint nn_act_price check (act_price is not null),
     constraint nn_act_balance check (act_balance is not null)
-    -- constraint fk_a_perf_id foreign key (perf_id) references performance_(perf_id)
 );
 desc actor;
--- Test data
-
 
 -- Table staff list is designed to store the staff list in performance. 
 -- perf_id's functions is to identify the different performances
@@ -174,84 +149,45 @@ create table staff_list
 (
     perf_id number not null,
     act_id number not null,
-    -- room_id number not null,
-    -- thea_id number not null,
     constraint pk_staff_list primary key(perf_id, act_id),
     constraint fk_sl_perf_id foreign key (perf_id) references performance_(perf_id),
     constraint fk_sl_act_id foreign key (act_id) references actor(act_id)
-    -- constraint fk_sl_room_id foreign key (room_id) references room(room_id),
-    -- constraint fk_sl_thea_id foreign key (thea_id) references theather(thea_id)
 );
 
 desc staff_list;
 
-desc actor;
-
--- create the table of ticket
--- create or replace type ticket as object
--- (
---     ticket_name varchar2(30),
---     ticket_type varchar2(20),
---     ticket_s_price number,
---     perf_id number,
---     thea_id number,
---     room_id number
---     -- ticket_discount float
--- );
--- /
-
--- desc ticket;
+-- create the table ticket
 create table ticket (
     ticket_type_id number,
     ticket_type varchar2(10),
     ticket_s_price number,
     perf_id number,
-    -- thea_id number,
-    -- room_id number,
-    -- number_of_ticket number,
     constraint pk_ticket_type_id primary key(ticket_type_id),
     constraint nn_ticket_type check(ticket_type in ('normal', 'reduced')),
     constraint nn_ticket_s_price check (ticket_s_price is not null),
     constraint fk_t_perf_id foreign key (perf_id) references performance_(perf_id)
-    -- constraint fk_t_thea_id foreign key (thea_id) references theather(thea_id),
-    -- constraint fk_t_room_id foreign key (room_id) references room(room_id)
 );
+
+desc ticket;
 
 -- create the sale table
 -- real price is generated by stand price times discount when insert the sales records 
 -- price is generated by a trigger when inserting row into this sales table
-
 create table sales (
     sales_id number,
     ticket_type_id number,
-    --ticket_type varchar2(20),
     ticket_num number,
-
     sales_price number, -- The real price of the ticket needs to be calculated by trigger
     sales_time date,
     constraint pk_sales_id primary key(sales_id),
-    --constraint nn_ticket_type check(ticket_type in ('normal', 'reduced')),
     constraint nn_ticket_num check (ticket_num is not null),
     constraint nn_sales_time check (sales_time is not null),
     constraint fk_s_ticket_type_id foreign key (ticket_type_id) references ticket(ticket_type_id)
 );
 
--- create table sales 
--- (
---     sale_ticket ticket,
---     comp_id number not null,
---     price number, -- The real price of the ticket needs to be calculated by trigger
---     sale_date varchar2(30),
---     constraint pk_sales primary key(sale_ticket, comp_id),
---     constraint nn_ticket_s_price check (sale_ticket.ticket_s_price is not null),
---     -- constraint nn_price check (price is not null),
---     constraint nn_sale_date check (sale_date is not null)
--- );
+desc sales;
 
-
-desc actor;
 -- Create the table of transactions 
--- 
 create table transactions
 (
     from_comp_id number not null,
@@ -277,10 +213,7 @@ create table refund (
     sales_price number
 );
 
-
--- Tasks:
--- 1. Fill the tables with some test data
-
+-------------------------------------------------------------------TEST DATA---------------------------------------------------------------------------------------
 -- Test data for company
 insert into company(comp_id, comp_name, comp_balance, comp_address) values (1, 'company1', 3000000, null);
 insert into company(comp_id, comp_name, comp_balance, comp_address) values (2, 'company2', 3000000, null);
@@ -402,15 +335,11 @@ insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values
 insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (11, 'normal', 1500, 6);
 insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (12, 'reduced', 1200, 6);
 
-
 -- Test data for sales
 insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (1, 1, 10, '18/09/2022 19:30:00');
 insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (2, 2, 10, '18/09/2022 19:30:00');
 
--- Test data for transaction_
-
--- TODO 
-
+---------------------------------------------------------------------TRIGGERS--------------------------------------------------------------------------------------
 -- Create the trigger to constraint one actor can only be in one performance at the same time
 create or replace trigger actor_in_one_performance
 before insert or update on staff_list
@@ -426,7 +355,6 @@ begin
         raise_application_error(-20001, 'The actor is already in another performance at the same time');
     end if;
 end;
-
 -- Test the trigger
 insert into staff_list (perf_id, act_id) values (1, 1);
 
@@ -478,6 +406,7 @@ insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (3, 
 insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (4, 10, 20, '20/09/2022 12:30:00'); --50% discount
 insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (5, 10, 5, '20/09/2022 14:30:00'); --30% discount
 
+
 -- Create the trigger to check the conflict of the room usage
 create or replace trigger room_usage_check 
 before insert or update on performance_
@@ -497,7 +426,6 @@ exception
     when useage_error then 
     RAISE_APPLICATION_ERROR(-20002, 'This room is occupied.');
 end;
-
 -- Test the trigger
 insert into performance_(perf_id, perf_begin, perf_end, reserved_sits, room_id,show_id, discount) values (16, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 100, 1, 1, 0);
 
@@ -518,7 +446,6 @@ exception
     when price_error then
     RAISE_APPLICATION_ERROR(-20003, 'The price of the actor cannot be decreased.');
 end;
-
 -- Test the trigger
 update actor set act_price = 9000 where act_id = 1;
 
@@ -541,7 +468,6 @@ exception
     when balance_error then
     RAISE_APPLICATION_ERROR(-20004, 'The balance of the company is not enough to pay this transaction.');
 end;
-
 -- Test the trigger
 insert into transactions (from_comp_id,to_comp_id, to_act_id, thea_id, amount_money) values(1, 2, null, null, 300000);
 
@@ -562,7 +488,6 @@ exception
     when price_error then
     RAISE_APPLICATION_ERROR(-20005, 'The price of the ticket cannot be changed.');
 end;
-
 -- Test the trigger
 update ticket set ticket_s_price = 1000 where ticket_type_id = 1;
 
@@ -603,7 +528,6 @@ begin
 exception
     when invalid_input then
     RAISE_APPLICATION_ERROR(-20006, 'The input is invalid. only from_comp_id and to_comp_id or from_comp_id and to_act_id or from_comp_id and thea_id can be used.');
-
 end;
 -- Test the trigger
 insert into transactions (from_comp_id,to_comp_id, to_act_id, thea_id, amount_money) values(1, 2, null, null, 300000); -- Test the company to company
@@ -702,20 +626,7 @@ insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (6, 
 insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (7, 2, 10, '21/09/2022 19:30:00'); --error -20010
 
 
--- 9. And more to be discussed.
-
--- Create the triggers
-
-
--- TODO
-
--- 11. Create the trigger to auto pay the actor
--- Jiaen
--- TODO
-
--- 12. Create the trigger to auto pay the company (ticket price)
--- Jiaen
--- TODO
+-- Create the trigger to auto pay the company (ticket price)
 create or replace trigger company_balance_change_sales
 after insert or delete on sales
 for each row
@@ -731,16 +642,11 @@ begin
         update company set comp_balance = comp_balance - :old.sales_price where comp_id = :old.comp_id;
     end if;
 end;
-
 -- Test the trigger
 insert into sales (sales_id, ticket_type_id, ticket_num,sales_price, sales_time) values (300, 2, 10, 3000, '18/09/2022 19:30:00');
 
-
--- 13. To be discussed.
-
-
--- Functions 
--- 1. Create the function to calculate whether a performance do not have enough actors.
+---------------------------------------------------------------------FUNCTIONS---------------------------------------------------------------------------------------
+-- Create the function to calculate whether a performance do not have enough actors.
 
 create or replace function check_actor_num (perf_id number) return number
 is
@@ -765,8 +671,8 @@ begin
     dbms_output.put_line(check_actor_num(5)); -- 2
 end;-- 0
 
--- Create the procedure to check whether all performances do not have enough actors.
 
+-- Create the procedure to check whether all performances do not have enough actors.
 create or replace procedure check_all_actor_num
 is 
     var_perf_id number;
@@ -784,11 +690,8 @@ begin
     check_all_actor_num;
 end;
 
--- Create the trigger to check whether a actor is already in a performance.
 
-
--- 2. Create the function to calculate which actor is free for the previous positions.
-
+-- Create the function to calculate which actor is free for the previous positions.
 -- perf_id is the performance id which the actor is going to be assigned to.
 create or replace function check_actor_free (perf_id number, actor_id number) 
 -- This function returns whether the actor is free for the previous positions.
@@ -827,8 +730,7 @@ begin
     dbms_output.put_line(check_actor_free(5,1));
 end;
 
--- Create the function to check which actor is free for the previous positions.
-
+-- Create the procedure to check which actors is free for the previous positions.
 create or replace procedure check_all_actor_free(perf_id number)
 is 
     var_actor_id number;
@@ -842,6 +744,7 @@ begin
         end if;
     end loop;
 end;
+
 -- Test the procedure & function of checking whether an actor is free for the previous positions.
 begin
     check_all_actor_free(5);
@@ -852,6 +755,7 @@ insert into actor (act_id, act_name, act_price, gender, act_age, act_balance) va
 begin
     check_all_actor_free(5);
 end;
+
 
 -- Create the function to calculate the free sits for a performance.
 create or replace function sits_left(perf_id_par number)
@@ -874,6 +778,30 @@ BEGIN
    dbms_output.put_line('Sits left in performance n° 5 : ' || sits); 
 END; 
 /
+
+-- Create the procedure to know at once the remaining sits in all performances
+-- Possible improvement : add the date to see the the infos of the current performances
+CREATE OR REPLACE PROCEDURE all_sits_left
+is 
+BEGIN 
+    declare 
+        cursor perfs
+        is
+            select perf_id
+            from performance_;
+        sits number;
+    
+    begin
+        for perf in perfs
+        loop
+            sits := sits_left(perf.perf_id);
+            dbms_output.put_line('Sits left in performance n° ' || perf.perf_id || ' : '|| sits); 
+        end loop;
+    end;
+END;
+
+-- test the procedure
+exec all_sits_left;
 
 
 -- Create the function to calculate the total sales for a performance.
