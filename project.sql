@@ -54,7 +54,7 @@ create table show (
 
 desc show;
 -- Create the table of theather
-create table theather 
+create table theater 
 (
     thea_id number,
     thea_name varchar2(30),
@@ -83,7 +83,7 @@ create table grant_
     constraint nn_total_period_year check (total_period_year is not null),
     constraint nn_period_time_month check (period_time_month is not null),
     constraint fk_thea foreign key (thea_id) references theater(thea_id),
-    CONSTRAINT fk_g_comp_id  foreign key (comp_id) references company(comp_id)
+    --CONSTRAINT fk_g_comp_id  foreign key (comp_id) references company(comp_id)
 );
 
 desc grant_;
