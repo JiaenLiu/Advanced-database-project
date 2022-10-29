@@ -1,6 +1,6 @@
 -- This file is written by Jiaen LIU and Jin-Young BAE and only for the Advanced databases' project.
 
-ALTER SESSION SET NLS_DATE_FORMAT = 'DD-MM-YYYY' ;
+ALTER SESSION SET NLS_DATE_FORMAT = 'DD/MM/YYYY';
 
 -- Oracle does not support constraints and defaults in type specifications. However, you can specify the constraints and defaults when creating the tables:
 -- From https://docs.oracle.com/en/database/oracle/oracle-database/18/adobj/constraints-on-objects.html#GUID-7191723A-4956-406B-A527-E2A4C288AE04
@@ -42,6 +42,7 @@ create table show (
     show_name varchar2(30),
     show_genre varchar2(30),
     show_cost number,
+    nb_actors number,
     comp_id number,
     constraint pk_show_id primary key(show_id),
     constraint nn_show_cost check(show_cost is not null),
@@ -81,7 +82,7 @@ create table grant_
     total_period_year number,
     period_time_month number,
     thea_id number,
-    comp_id number,
+    -- comp_id number,
     constraint pk_grand_id primary key(grant_id),
     constraint nn_total_amount check(total_amount is not null),
     constraint nn_total_period_year check (total_period_year is not null),
@@ -102,7 +103,7 @@ create table room
     room_capacity number,
     room_cost number,
     thea_id number not null,
-    comp_id number,
+    -- comp_id number,
     constraint pk_room_id primary key(room_id),
     constraint nn_room_capacity check (room_capacity is not null),
     constraint nn_room_cost check (room_cost is not null),
@@ -126,7 +127,7 @@ create table performance_
     perf_name varchar2(20),
     reserved_sits number,
     room_id number not null,
-    thea_id number not null,
+    -- thea_id number not null,
     show_id number not null,
     constraint pk_perf_id primary key(perf_id),
     constraint nn_perf_begin check (perf_begin is not null),
@@ -141,14 +142,14 @@ desc performance_;
 
 -- The schedual table of the performances
 -- !!!Need to be implemented and discussed
-create table schedual 
-(
-    perf_id number,
-    room_id number,
-    thea_id number,
-    constraint pk_schedual primary key (perf_id,room_id)
-);
-desc schedual;
+-- create table schedual 
+-- (
+--     perf_id number,
+--     room_id number,
+--     thea_id number,
+--     constraint pk_schedual primary key (perf_id,room_id)
+-- );
+-- desc schedual;
 
 
 -- Whether we need that stracture? Need to discuss.
@@ -180,13 +181,13 @@ create table staff_list
 (
     perf_id number not null,
     act_id number not null,
-    room_id number not null,
-    thea_id number not null,
+    -- room_id number not null,
+    -- thea_id number not null,
     constraint pk_staff_list primary key(perf_id, act_id),
     constraint fk_sl_perf_id foreign key (perf_id) references performance_(perf_id),
-    constraint fk_sl_act_id foreign key (act_id) references actor(act_id),
-    constraint fk_sl_room_id foreign key (room_id) references room(room_id),
-    constraint fk_sl_thea_id foreign key (thea_id) references theather(thea_id)
+    constraint fk_sl_act_id foreign key (act_id) references actor(act_id)
+    -- constraint fk_sl_room_id foreign key (room_id) references room(room_id),
+    -- constraint fk_sl_thea_id foreign key (thea_id) references theather(thea_id)
 );
 
 desc staff_list;
@@ -209,17 +210,17 @@ desc actor;
 -- desc ticket;
 create table ticket (
     ticket_type_id number,
-    ticket_type number,
+    ticket_type varchar2(10),
     ticket_s_price number,
     perf_id number,
-    thea_id number,
-    room_id number,
+    -- thea_id number,
+    -- room_id number,
     number_of_ticket number,
     constraint pk_ticket_type_id primary key(ticket_type_id),
     constraint nn_ticket_s_price check (ticket_s_price is not null),
     constraint fk_t_perf_id foreign key (perf_id) references performance_(perf_id),
-    constraint fk_t_thea_id foreign key (thea_id) references theather(thea_id),
-    constraint fk_t_room_id foreign key (room_id) references room(room_id)
+    -- constraint fk_t_thea_id foreign key (thea_id) references theather(thea_id),
+    -- constraint fk_t_room_id foreign key (room_id) references room(room_id)
 );
 
 -- create the sale table
@@ -231,7 +232,7 @@ create table sales (
     ticket_type_id number,
     ticket_num number,
 
-    sales_price number,
+    sales_price number, -- The real price of the ticket needs to be calculated by trigger
     sales_time varchar2(30),
     constraint pk_sales_id primary key(sales_id),
     constraint nn_ticket_num check (ticket_num is not null),
@@ -353,7 +354,7 @@ insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits
 insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (12, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf12', 84, 3, 4,9);
 insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (13, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf13', 72, 1, 5,10);
 insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (14, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf14', 89, 2, 5,11);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (15, '20/09/2022 19:30:33', '20/09/2022 21:30:33', '71', 100, 3, 5,12);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (15, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf15', 71, 3, 5,12);
 
 -- Test data for actor
 insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(1, 'actor1', 10000, 'M', 'type1', 20, 100000);
