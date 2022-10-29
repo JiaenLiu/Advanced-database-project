@@ -1,6 +1,6 @@
 -- This file is written by Jiaen LIU and Jin-Young BAE and only for the Advanced databases' project.
 
-ALTER SESSION SET NLS_DATE_FORMAT = 'DD/MM/YYYY';
+ALTER SESSION SET NLS_DATE_FORMAT = 'DD/MM/YYYY HH:MI:SS';
 
 -- Oracle does not support constraints and defaults in type specifications. However, you can specify the constraints and defaults when creating the tables:
 -- From https://docs.oracle.com/en/database/oracle/oracle-database/18/adobj/constraints-on-objects.html#GUID-7191723A-4956-406B-A527-E2A4C288AE04
@@ -13,7 +13,6 @@ create type address_type as object
     city varchar2(30),
     postcode number,
     street_addr varchar2(50)
-    -- constrain 
 );
 /
 -- Describe the address type
@@ -27,7 +26,7 @@ create table company
     comp_name varchar2(30),
     comp_balance number,
     comp_address address_type,
-    thea_id number,
+    -- thea_id number,
     constraint pk_comp_id primary key (comp_id),
     constraint nn_comp_name check (comp_name is not null),
     constraint nn_comp_balance check (comp_balance is not null)
@@ -50,9 +49,7 @@ create table show (
     -- constraint nn_show_genre check(show_genre is not null),
     constraint nn_comp_id check (comp_id is not null),
     constraint gz_show_cost check(show_cost > 0),
-    CONSTRAINT fk_comp
-    FOREIGN KEY (comp_id)
-    REFERENCES company(comp_id)
+    constraint fk_comp foreign key (comp_id) references company(comp_id)
 );
 
 desc show;
@@ -65,12 +62,10 @@ create table theather
     comp_id number,
     constraint pk_thea_id primary key(thea_id),
     constraint nn_t_comp_id check (comp_id is not null),
-    CONSTRAINT fk_t_comp
-    FOREIGN KEY (comp_id)
-    REFERENCES company(comp_id)
+    constraint fk_t_comp foreign key (comp_id) references company(comp_id)
 );
 
-desc theather;
+desc theater;
 -- Create the table of grant
 -- The unit of donation is euro
 create table grant_ 
@@ -87,9 +82,7 @@ create table grant_
     constraint nn_total_amount check(total_amount is not null),
     constraint nn_total_period_year check (total_period_year is not null),
     constraint nn_period_time_month check (period_time_month is not null),
-    CONSTRAINT fk_thea
-    FOREIGN KEY (thea_id)
-    REFERENCES theather(thea_id),
+    constraint fk_thea foreign key (thea_id) references theater(thea_id),
     CONSTRAINT fk_g_comp_id  foreign key (comp_id) references company(comp_id)
 );
 
@@ -108,8 +101,8 @@ create table room
     constraint nn_room_capacity check (room_capacity is not null),
     constraint nn_room_cost check (room_cost is not null),
     constraint nn_r_thea_id check (thea_id is not null),
-    constraint fk_r_thea_id foreign key (thea_id) references theather(thea_id),
-    constraint fk_r_comp_id foreign key (comp_id) references company(comp_id)
+    constraint fk_r_thea_id foreign key (thea_id) references theater(thea_id),
+    -- constraint fk_r_comp_id foreign key (comp_id) references company(comp_id)
 );
 
 desc room;
@@ -122,19 +115,21 @@ desc room;
 create table performance_ 
 (
     perf_id number,
-    perf_begin varchar2(30), -- The timestamp string like 20/09/2022 19:30:33
-    perf_end varchar2(30), -- The timestamp string
+    perf_begin date, -- The timestamp string like 20/09/2022 19:30:33
+    perf_end date, -- The timestamp string
     perf_name varchar2(20),
     reserved_sits number,
     room_id number not null,
     -- thea_id number not null,
     show_id number not null,
+    discount boolean,
     constraint pk_perf_id primary key(perf_id),
     constraint nn_perf_begin check (perf_begin is not null),
     constraint nn_perf_end check (perf_end is not null),
     constraint nn_reserved_sits check (reserved_sits is not null),
+    constraint nn_discount check (discount is not null),
     constraint fk_p_room_id foreign key (room_id) references room(room_id),
-    constraint fk_p_thea_id foreign key (thea_id) references theather(thea_id),
+    --constraint fk_p_thea_id foreign key (thea_id) references theater(thea_id),
     constraint fk_p_show_id foreign key (show_id) references show(show_id)
 ); 
 
@@ -215,8 +210,9 @@ create table ticket (
     perf_id number,
     -- thea_id number,
     -- room_id number,
-    number_of_ticket number,
+    -- number_of_ticket number,
     constraint pk_ticket_type_id primary key(ticket_type_id),
+    constraint nn_ticket_type check(ticket_type in ('normal', 'reduced')),
     constraint nn_ticket_s_price check (ticket_s_price is not null),
     constraint fk_t_perf_id foreign key (perf_id) references performance_(perf_id),
     -- constraint fk_t_thea_id foreign key (thea_id) references theather(thea_id),
@@ -230,11 +226,13 @@ create table ticket (
 create table sales (
     sales_id number,
     ticket_type_id number,
+    --ticket_type varchar2(20),
     ticket_num number,
 
     sales_price number, -- The real price of the ticket needs to be calculated by trigger
-    sales_time varchar2(30),
+    sales_time date,
     constraint pk_sales_id primary key(sales_id),
+    --constraint nn_ticket_type check(ticket_type in ('normal', 'reduced')),
     constraint nn_ticket_num check (ticket_num is not null),
     constraint nn_sales_price check (sales_price is not null),
     constraint nn_sales_time check (sales_time is not null),
@@ -259,14 +257,14 @@ desc actor;
 -- 
 create table transactions
 (
-    comp_id number not null,
-    an_comp_id number,
-    act_id number,
+    from_comp_id number not null,
+    to_comp_id number,
+    to_act_id number,
     thea_id number,
     amount_money number not null,
-    constraint fk_t_comp_id foreign key (comp_id) references company(comp_id),
-    constraint fk_t_an_comp_id foreign key (an_comp_id) references company(comp_id),
-    constraint fk_t_act_id foreign key (act_id) references actor(act_id),
+    constraint fk_t_from_comp_id foreign key (from_comp_id) references company(comp_id),
+    constraint fk_t_to_comp_id foreign key (to_comp_id) references company(comp_id),
+    constraint fk_t_to_act_id foreign key (to_act_id) references actor(act_id),
     constraint fk_t_thea_id foreign key (thea_id) references theather(thea_id),
     constraint gz_amount_money check (amount_money > 0)
 );
