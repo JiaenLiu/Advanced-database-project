@@ -899,6 +899,37 @@ END;
 /
 
 
--- 5. Create the function to calculate the total sales for a theater.
+-- Create the function to calculate the total sales for a company/theater.
+create or replace function tt_sales_company(comp_id_par number)
+return number is
+    tt_sales_comp number := 0;
+    
+begin 
+    declare
+        cursor comp_perf
+        is
+            select perf_id
+            from theater th, room r, performance_ perf
+            where th.comp_id = comp_id_par and r.thea_id = th.thea_id and perf.room_id = r.room_id;
+    
+    begin 
+        for perf_id in comp_perf
+        loop
+            tt_sales_comp := tt_sales_comp + tt_sales_perf(perf_id.perf_id);
+            dbms_output.put_line(tt_sales_comp);
+        end loop;
+    return tt_sales_comp;
+    end;
+end;
+/
+
+--test the function
+DECLARE 
+   tt_sales_comp number; 
+BEGIN 
+   tt_sales_comp := tt_sales_company(2); 
+   dbms_output.put_line('total sales of Company n° ' || 2 || ' : ' || tt_sales_comp); 
+END; 
+/
 
 
