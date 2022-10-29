@@ -371,23 +371,32 @@ insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_b
 
 -- Test data for staff_list
 
-insert into staff_list (perf_id, act_id) values (1, 1,);
-insert into staff_list (perf_id, act_id) values (1, 2,);
-insert into staff_list (perf_id, act_id) values (1, 3,);
-insert into staff_list (perf_id, act_id) values (2, 4,);
-insert into staff_list (perf_id, act_id) values (2, 5,);
-insert into staff_list (perf_id, act_id) values (2, 6,);
-insert into staff_list (perf_id, act_id) values (3, 7,);
-insert into staff_list (perf_id, act_id) values (3, 8,);
-insert into staff_list (perf_id, act_id) values (3, 9,);
+insert into staff_list (perf_id, act_id) values (1, 1);
+insert into staff_list (perf_id, act_id) values (1, 2);
+insert into staff_list (perf_id, act_id) values (1, 3);
+insert into staff_list (perf_id, act_id) values (2, 4);
+insert into staff_list (perf_id, act_id) values (2, 5);
+insert into staff_list (perf_id, act_id) values (2, 6);
+insert into staff_list (perf_id, act_id) values (3, 7);
+insert into staff_list (perf_id, act_id) values (3, 8);
+insert into staff_list (perf_id, act_id) values (3, 9);
 insert into staff_list (perf_id, act_id) values (4, 10);
 insert into staff_list (perf_id, act_id) values (4, 11);
 insert into staff_list (perf_id, act_id) values (4, 12);
 insert into staff_list (perf_id, act_id) values (5, 13);
 
 -- Test data for ticket
-insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (1, 'VIP', 10000, 1);
-insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (2, 'R', 5000, 1);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (1, 'R', 200, 1);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (2, 'S', 500, 2);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (3, 'A', 700, 3);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (4, 'R', 800, 4);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (5, 'S', 900, 5);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (6, 'A', 1000, 6);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (7, 'R', 1100, 7);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (8, 'S', 1200, 8);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (9, 'A', 1300, 9);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (10, 'R', 1400, 10);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (11, 'S', 1500, 11);
 
 
 -- Test data for sales
