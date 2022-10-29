@@ -156,7 +156,6 @@ create table actor
     act_name varchar2(30),
     act_price number,
     gender varchar2(10),
-    act_type varchar2(30),
     act_age number,
     act_balance number,
     -- perf_id number not null,
@@ -353,19 +352,19 @@ insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits
 insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id,show_id, discount) values (15, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf15', 71, 3, 12,1);
 
 -- Test data for actor
-insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(1, 'actor1', 10000, 'M', 'type1', 20, 100000);
-insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(2, 'actor2', 10000, 'F', 'type2', 30, 100000);
-insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(3, 'actor3', 20000, 'M', 'type3', 35, 120000);
-insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(4, 'actor4', 10000, 'F', 'type2', 30, 100000);
-insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(5, 'actor5', 10000, 'F', 'type2', 30, 100000);
-insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(6, 'actor6', 10000, 'F', 'type2', 30, 100000);
-insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(7, 'actor7', 10000, 'F', 'type2', 59, 100000);
-insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(8, 'actor8', 10000, 'F', 'type2', 23, 100000);
-insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(9, 'actor9', 10000, 'F', 'type2', 40, 100000);
-insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(10, 'actor10', 40000, 'F', 'type2', 30, 100000);
-insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(11, 'actor11', 30000, 'F', 'type2', 30, 100000);
-insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(12, 'actor12', 18000, 'F', 'type2', 30, 100000);
-insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(13, 'actor13', 29000, 'F', 'type2', 30, 100000);
+insert into actor (act_id, act_name, act_price, gender, act_age, act_balance) values(1, 'actor1', 10000, 'M', 20, 100000);
+insert into actor (act_id, act_name, act_price, gender, act_age, act_balance) values(2, 'actor2', 10000, 'F', 30, 100000);
+insert into actor (act_id, act_name, act_price, gender, act_age, act_balance) values(3, 'actor3', 20000, 'M', 35, 120000);
+insert into actor (act_id, act_name, act_price, gender, act_age, act_balance) values(4, 'actor4', 10000, 'F', 30, 100000);
+insert into actor (act_id, act_name, act_price, gender, act_age, act_balance) values(5, 'actor5', 10000, 'F', 30, 100000);
+insert into actor (act_id, act_name, act_price, gender, act_age, act_balance) values(6, 'actor6', 10000, 'F', 30, 100000);
+insert into actor (act_id, act_name, act_price, gender, act_age, act_balance) values(7, 'actor7', 10000, 'F', 59, 100000);
+insert into actor (act_id, act_name, act_price, gender, act_age, act_balance) values(8, 'actor8', 10000, 'F', 23, 100000);
+insert into actor (act_id, act_name, act_price, gender, act_age, act_balance) values(9, 'actor9', 10000, 'F', 40, 100000);
+insert into actor (act_id, act_name, act_price, gender, act_age, act_balance) values(10, 'actor10', 40000, 'F', 30, 100000);
+insert into actor (act_id, act_name, act_price, gender, act_age, act_balance) values(11, 'actor11', 30000, 'F', 30, 100000);
+insert into actor (act_id, act_name, act_price, gender, act_age, act_balance) values(12, 'actor12', 18000, 'F', 30, 100000);
+insert into actor (act_id, act_name, act_price, gender, act_age, act_balance) values(13, 'actor13', 29000, 'F', 30, 100000);
 
 -- Test data for staff_list
 insert into staff_list (perf_id, act_id) values (1, 1);
@@ -417,25 +416,25 @@ insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (2, 
 
 -- TODO 
 
--- Create the trigger to check the reserved sit is not over the capacity of the room
+-- 5. Create the trigger to check the reserved sit is not over the capacity of the room
 
--- Create the trigger to check the room useage is not overlaped.
+-- 6. Create the trigger to check the room useage is not overlaped.
 
--- Create the trigger to check the sales date that is not over the performance date.
+-- 7. Create the trigger to check the sales date that is not over the performance date.
 
--- Create the sales number is lower the reserved sit.
+-- 8. Create the sales number is lower the reserved sit.
 
--- 5. And more to be discussed.
--- 6. Create the trigger to auto generate the real price of the ticket
-
--- TODO
-
--- 7. Create the trigger to auto pay the actor
+-- 9. And more to be discussed.
+-- 10. Create the trigger to auto generate the real price of the ticket
 
 -- TODO
 
--- 8. Create the trigger to auto pay the company (ticket price)
+-- 11. Create the trigger to auto pay the actor
 
 -- TODO
 
--- 10. To be discussed.
+-- 12. Create the trigger to auto pay the company (ticket price)
+
+-- TODO
+
+-- 13. To be discussed.
