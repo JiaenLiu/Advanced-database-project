@@ -274,8 +274,7 @@ desc transactions;
 -- Create the table of refund
 create table refund (
     sales_id number,
-    sales_price number,
-    constraint fk_sales_id foreign key (sales_id) references sales(sales_id)
+    sales_price number
 );
 
 
@@ -412,7 +411,29 @@ insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (2, 
 
 -- TODO 
 
--- 2. Create the trigger to check the conflict of the room usage
+-- Create the trigger to auto generate the total price of a sale
+create or replace trigger calculate_sales_price
+before insert or update on sales
+for each row
+
+declare
+    ticket_price number;
+    
+begin
+    select ticket_s_price into ticket_price
+    from ticket
+    where ticket_type_id = :new.ticket_type_id;
+    
+    -- we multiply the ticket price by the number of tickets bought
+    :new.sales_price := :new.ticket_num * ticket_price;
+end;
+/
+--Test the trigger
+delete from sales; --initially the price was at 0 for every sale
+insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (1, 1, 10, '18/09/2022 19:30:00');
+insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (2, 2, 10, '18/09/2022 19:30:00');
+
+-- Create the trigger to check the conflict of the room usage
 create or replace trigger room_usage_check 
 before insert or update on performance_
 for each row
@@ -435,8 +456,8 @@ end;
 -- Test the trigger
 insert into performance_(perf_id, perf_begin, perf_end, reserved_sits, room_id,show_id, discount) values (16, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 100, 1, 1, 0);
 
--- 3. Create the trigger to check the price of the actor No decreasing.
 
+-- Create the trigger to check the price of the actor No decreasing.
 create or replace trigger actor_price_check
 before update on actor
 for each row
@@ -456,8 +477,8 @@ end;
 -- Test the trigger
 update actor set act_price = 9000 where act_id = 1;
 
--- 4. Create the trigger to check the balance of the company Enough money to pay the others.
 
+-- Create the trigger to check the balance of the company Enough money to pay the others.
 create or replace trigger company_balance_check
 before insert on transactions
 for each row
@@ -479,6 +500,7 @@ end;
 -- Test the trigger
 insert into transactions (from_comp_id,to_comp_id, to_act_id, thea_id, amount_money) values(1, 2, null, null, 300000);
 
+
 -- Create the trigger to check the price of ticket should not be changed 
 create or replace trigger ticket_price_check
 before update on ticket
@@ -498,6 +520,7 @@ end;
 
 -- Test the trigger
 update ticket set ticket_s_price = 1000 where ticket_type_id = 1;
+
 
 -- Create the trigger to change the balance of the company,actor and theater's company after the transaction.
 create or replace trigger company_balance_change
@@ -543,6 +566,7 @@ insert into transactions (from_comp_id,to_comp_id, to_act_id, thea_id, amount_mo
 insert into transactions (from_comp_id,to_comp_id, to_act_id, thea_id, amount_money) values(1, null, null, 1, 300000); -- Test the donation to theater
 select * from company;
 
+
 -- Create the trigger to check the reserved sits of the performance Enough sits to reserve and do not over the capacity of the room.
 create or replace trigger count_reserved_sits
 after insert or delete on sales
@@ -567,9 +591,9 @@ begin
         and perf2.room_id = r.room_id;
     
         if nb_sold_sits = cap_room then
-            raise_application_error(-20001, 'No more sits available.');
+            raise_application_error(-20012, 'No more sits available.');
         elsif nb_sold_sits + :new.ticket_num > cap_room then
-            raise_application_error(-20002, 'Not enough tickets left.');
+            raise_application_error(-20022, 'Not enough tickets left.');
         else
             update performance_
             set reserved_sits = reserved_sits + :new.ticket_num
@@ -603,7 +627,11 @@ begin
     end if;
 end;
 /
-
+-- Test the trigger
+insert into sales values (3, 2, 100, '16/09/2022 19:30:00'); --error -20012
+insert into sales values (4, 2, 80, '16/09/2022 19:30:00'); --inserted 
+insert into sales values (5, 2, 1, '16/09/2022 19:30:00'); --error -20022
+delete from sales where sales_id = 4; --deleted from sales and from reserved_sits
 
 -- Create the trigger to check the sales date that is not over the performance date.
 create or replace trigger over_deadline
@@ -624,26 +652,12 @@ begin
     end if;
 end;
 /
+--Test the trigger
+insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (6, 2, 10, '17/09/2022 19:30:00'); --added with no problem
+insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (7, 2, 10, '21/09/2022 19:30:00'); --error -20010
+
 
 -- 9. And more to be discussed.
-
--- Create the trigger to auto generate the total price of a sale
-create or replace trigger calculate_sales_price
-before insert or update on sales
-for each row
-
-declare
-    ticket_price number;
-    
-begin
-    select ticket_s_price into ticket_price
-    from ticket
-    where ticket_type_id = :new.ticket_type_id;
-    
-    -- we multiply the ticket price by the number of tickets bought
-    :new.sales_price := :new.ticket_num * ticket_price;
-end;
-/
 
 
 -- TODO
