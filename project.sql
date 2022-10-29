@@ -122,7 +122,7 @@ create table performance_
     room_id number not null,
     -- thea_id number not null,
     show_id number not null,
-    discount boolean,
+    discount number,
     constraint pk_perf_id primary key(perf_id),
     constraint nn_perf_begin check (perf_begin is not null),
     constraint nn_perf_end check (perf_end is not null),
@@ -292,67 +292,67 @@ insert into theather(thea_id, thea_name, thea_address, comp_id) values (4, 'thea
 insert into theather(thea_id, thea_name, thea_address, comp_id) values (5, 'theather5', null, 5);
 
 -- Test data for room
-insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (1, 'room1',100, 10000, 1, 1);
-insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (2, 'room2',100, 15000, 1, 1);
-insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (3, 'room3',100, 10300, 1, 1);
-insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (4, 'room4',100, 18000, 2, 2);
-insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (5, 'room5',80, 10000, 2, 2);
-insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (6, 'room6',100, 10000, 2, 2);
-insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (7, 'room7',75, 10000, 3, 3);
-insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (8, 'room8',90, 10000, 3, 3);
-insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (9, 'room9',100, 13000, 3, 3);
-insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (10, 'room10',100, 10000, 4, 4);
-insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (11, 'room11',90, 10000, 4, 4);
-insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (12, 'room12',84, 10000, 4, 4);
-insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (13, 'room13',72, 10000, 5, 5);
-insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (14, 'room14',89, 10000, 5, 5);
-insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (15, 'room15',71, 10000, 5, 5);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id) values (1, 'room1',100, 10000, 1);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id) values (2, 'room2',100, 15000, 1);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id) values (3, 'room3',100, 10300, 1);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id) values (4, 'room4',100, 18000, 2);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id) values (5, 'room5',80, 10000, 2);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id) values (6, 'room6',100, 10000, 2);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id) values (7, 'room7',75, 10000, 3);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id) values (8, 'room8',90, 10000, 3);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id) values (9, 'room9',100, 13000, 3);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id) values (10, 'room10',100, 10000,4);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id) values (11, 'room11',90, 10000, 4);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id) values (12, 'room12',84, 10000, 4);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id) values (13, 'room13',72, 10000, 5);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id) values (14, 'room14',89, 10000, 5);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id) values (15, 'room15',71, 10000, 5);
 
 -- Test data for show
-insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (1, 'show1', 'genre1', 10000, 1);
-insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (2, 'show2', 'genre2', 10000, 1);
-insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (3, 'show3', 'genre1', 10000, 1);
-insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (4, 'show4', 'genre3', 10000, 2);
-insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (5, 'show5', 'genre2', 10000, 2);
-insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (6, 'show6', 'genre3', 10000, 2);
-insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (7, 'show7', 'genre1', 10000, 3);
-insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (8, 'show8', 'genre2', 10000, 3);
-insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (9, 'show9', 'genre3', 10000, 3);
-insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (10, 'show10', 'genre1', 10000, 4);
-insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (11, 'show11', 'genre2', 10000, 4);
-insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (12, 'show12', 'genre3', 10000, 4);
-insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (13, 'show13', 'genre1', 10000, 5);
-insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (14, 'show14', 'genre2', 10000, 5);
-insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (15, 'show15', 'genre3', 10000, 5);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id, nb_actors) values (1, 'show1', 'genre1', 10000, 1, 3);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id, nb_actors) values (2, 'show2', 'genre2', 10000, 1, 3);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id, nb_actors) values (3, 'show3', 'genre1', 10000, 1, 3);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id, nb_actors) values (4, 'show4', 'genre3', 10000, 2, 3);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id, nb_actors) values (5, 'show5', 'genre2', 10000, 2, 3);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id, nb_actors) values (6, 'show6', 'genre3', 10000, 2, 3);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id, nb_actors) values (7, 'show7', 'genre1', 10000, 3, 3);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id, nb_actors) values (8, 'show8', 'genre2', 10000, 3, 3);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id, nb_actors) values (9, 'show9', 'genre3', 10000, 3, 3);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id, nb_actors) values (10, 'show10', 'genre1', 10000, 4, 3);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id, nb_actors) values (11, 'show11', 'genre2', 10000, 4, 3);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id, nb_actors) values (12, 'show12', 'genre3', 10000, 4, 3);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id, nb_actors) values (13, 'show13', 'genre1', 10000, 5, 3);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id, nb_actors) values (14, 'show14', 'genre2', 10000, 5, 3);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id, nb_actors) values (15, 'show15', 'genre3', 10000, 5, 3);
 
 -- Test data for grant_
-insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id, comp_id) values (1, 'donor1', 'type1', 100000, 5, 12, 1, 1);
-insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id, comp_id) values (2, 'donor2', 'type2', 120000, 0, 6, 1, 1);
-insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id, comp_id) values (3, 'donor3', 'type3', 120000, 0, 3, 1, 1);
-insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id, comp_id) values (4, 'donor4', 'type1', 100000, 5, 12, 2, 2);
-insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id, comp_id) values (5, 'donor5', 'type2', 120000, 0, 4, 2, 2);
-insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id, comp_id) values (6, 'donor6', 'type3', 120000, 0, 3, 2, 2);
-insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id, comp_id) values (7, 'donor7', 'type1', 100000, 5, 12, 3, 3);
-insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id, comp_id) values (8, 'donor8', 'type2', 120000, 0, 4, 3, 3);
-insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id, comp_id) values (9, 'donor9', 'type3', 120000, 0, 3, 4, 4);
-insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id, comp_id) values (10, 'donor10', 'type1', 100000, 5, 12, 5, 5);
+insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id) values (1, 'donor1', 'type1', 100000, 5, 12, 1);
+insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id) values (2, 'donor2', 'type2', 120000, 0, 6, 1);
+insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id) values (3, 'donor3', 'type3', 120000, 0, 3, 1);
+insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id) values (4, 'donor4', 'type1', 100000, 5, 12, 2);
+insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id) values (5, 'donor5', 'type2', 120000, 0, 4, 2);
+insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id) values (6, 'donor6', 'type3', 120000, 0, 3, 2);
+insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id) values (7, 'donor7', 'type1', 100000, 5, 12, 3);
+insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id) values (8, 'donor8', 'type2', 120000, 0, 4, 3);
+insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id) values (9, 'donor9', 'type3', 120000, 0, 3, 4);
+insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id) values (10, 'donor10', 'type1', 100000, 5, 12, 5);
 
 -- Test data for performance_
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (1, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf1', 100, 1, 1,1);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (2, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf2', 100, 2, 1,1);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (3, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf3', 100, 3, 1,1);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (4, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf4', 80, 1, 2,1);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (5, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf5', 100, 2, 2,2);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (6, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf6', 75, 3, 2,3);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (7, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf7', 100, 1, 3,4);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (8, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf8', 90, 2, 3,5);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (9, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf9', 100, 3, 3,6);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (10, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf10', 100, 1, 4,7);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (11, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf11', 90, 2, 4,8);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (12, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf12', 84, 3, 4,9);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (13, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf13', 72, 1, 5,10);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (14, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf14', 89, 2, 5,11);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (15, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf15', 71, 3, 5,12);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (1, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf1', 100, 1, 1,1, 0);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (2, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf2', 100, 2, 1,1, 0);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (3, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf3', 100, 3, 1,1, 0);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (4, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf4', 80, 1, 2, 1, 1);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (5, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf5', 100, 2, 2,2, 1);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (6, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf6', 75, 3, 2,3, 1);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (7, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf7', 100, 1, 3,4, 0);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (8, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf8', 90, 2, 3,5,0 );
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (9, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf9', 100, 3, 3,6,1);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (10, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf10', 100, 1, 4,7,0);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (11, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf11', 90, 2, 4,8,1);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (12, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf12', 84, 3, 4,9,0);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (13, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf13', 72, 1, 5,10,0);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (14, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf14', 89, 2, 5,11,1);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (15, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf15', 71, 3, 5,12,1);
 
 -- Test data for actor
 insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(1, 'actor1', 10000, 'M', 'type1', 20, 100000);
@@ -371,23 +371,23 @@ insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_b
 
 -- Test data for staff_list
 
-insert into staff_list (perf_id, act_id ,room_id, thea_id) values (1, 1, 1, 1);
-insert into staff_list (perf_id, act_id ,room_id, thea_id) values (1, 2, 1, 1);
-insert into staff_list (perf_id, act_id ,room_id, thea_id) values (1, 3, 1, 1);
-insert into staff_list (perf_id, act_id ,room_id, thea_id) values (2, 4, 2, 1);
-insert into staff_list (perf_id, act_id ,room_id, thea_id) values (2, 5, 2, 1);
-insert into staff_list (perf_id, act_id ,room_id, thea_id) values (2, 6, 2, 1);
-insert into staff_list (perf_id, act_id ,room_id, thea_id) values (3, 7, 3, 1);
-insert into staff_list (perf_id, act_id ,room_id, thea_id) values (3, 8, 3, 1);
-insert into staff_list (perf_id, act_id ,room_id, thea_id) values (3, 9, 3, 1);
-insert into staff_list (perf_id, act_id ,room_id, thea_id) values (4, 10, 1, 2);
-insert into staff_list (perf_id, act_id ,room_id, thea_id) values (4, 11, 1, 2);
-insert into staff_list (perf_id, act_id ,room_id, thea_id) values (4, 12, 1, 2);
-insert into staff_list (perf_id, act_id ,room_id, thea_id) values (5, 13, 2, 2);
+insert into staff_list (perf_id, act_id) values (1, 1,);
+insert into staff_list (perf_id, act_id) values (1, 2,);
+insert into staff_list (perf_id, act_id) values (1, 3,);
+insert into staff_list (perf_id, act_id) values (2, 4,);
+insert into staff_list (perf_id, act_id) values (2, 5,);
+insert into staff_list (perf_id, act_id) values (2, 6,);
+insert into staff_list (perf_id, act_id) values (3, 7,);
+insert into staff_list (perf_id, act_id) values (3, 8,);
+insert into staff_list (perf_id, act_id) values (3, 9,);
+insert into staff_list (perf_id, act_id) values (4, 10);
+insert into staff_list (perf_id, act_id) values (4, 11);
+insert into staff_list (perf_id, act_id) values (4, 12);
+insert into staff_list (perf_id, act_id) values (5, 13);
 
 -- Test data for ticket
-insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id, thea_id, room_id, number_of_ticket) values (1, 'VIP', 10000, 1, 1, 1, 10);
-insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id, thea_id, room_id, number_of_ticket) values (2, 'R', 5000, 1, 1, 1,20);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (1, 'VIP', 10000, 1);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (2, 'R', 5000, 1);
 
 
 -- Test data for sales
