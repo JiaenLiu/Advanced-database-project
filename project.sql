@@ -274,6 +274,19 @@ desc transaction_;
 -- We make all the meta-table (show, performance and actor) into class and object. 
 -- Using these objects to create the table of them and store them in the transaction table.
 
+<<<<<<< Updated upstream
+=======
+-- Create the table of refund
+create table refund (
+    sales_id number,
+    sales_price number,
+    -- sales_time date
+    -- constraint pk_refund_sales_id primary key(sales_id),
+    constraint nn_sales_time check (sales_time is not null)
+);
+
+
+>>>>>>> Stashed changes
 -- Tasks:
 -- 1. Fill the tables with some test data
 
