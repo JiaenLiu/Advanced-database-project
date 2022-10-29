@@ -81,13 +81,15 @@ create table grant_
     total_period_year number,
     period_time_month number,
     thea_id number,
+    comp_id number,
     constraint pk_grand_id primary key(grant_id),
     constraint nn_total_amount check(total_amount is not null),
     constraint nn_total_period_year check (total_period_year is not null),
     constraint nn_period_time_month check (period_time_month is not null),
     CONSTRAINT fk_thea
     FOREIGN KEY (thea_id)
-    REFERENCES theather(thea_id)
+    REFERENCES theather(thea_id),
+    CONSTRAINT fk_g_comp_id  foreign key (comp_id) references company(comp_id)
 );
 
 desc grant_;
@@ -105,7 +107,8 @@ create table room
     constraint nn_room_capacity check (room_capacity is not null),
     constraint nn_room_cost check (room_cost is not null),
     constraint nn_r_thea_id check (thea_id is not null),
-    constraint fk_r_thea_id foreign key (thea_id) references theather(thea_id)
+    constraint fk_r_thea_id foreign key (thea_id) references theather(thea_id),
+    constraint fk_r_comp_id foreign key (comp_id) references company(comp_id)
 );
 
 desc room;
@@ -232,4 +235,102 @@ desc transaction_;
 -- We make all the meta-table (show, performance and actor) into class and object. 
 -- Using these objects to create the table of them and store them in the transaction table.
 
+-- Tasks:
+-- 1. Fill the tables with some test data
 
+-- Test data for company
+insert into company(comp_id, comp_name, comp_balance, comp_address, thea_id) values (1, 'company1', 3000000, null, 1);
+insert into company(comp_id, comp_name, comp_balance, comp_address, thea_id) values (2, 'company2', 3000000, null, 2);
+insert into company(comp_id, comp_name, comp_balance, comp_address, thea_id) values (3, 'company3', 3000000, null, 3);
+insert into company(comp_id, comp_name, comp_balance, comp_address, thea_id) values (4, 'company4', 3000000, null, 4);
+insert into company(comp_id, comp_name, comp_balance, comp_address, thea_id) values (5, 'company5', 3000000, null, 5);
+
+-- Test data for theather
+insert into theather(thea_id, thea_name, thea_address, comp_id) values (1, 'theather1', null, 1);
+insert into theather(thea_id, thea_name, thea_address, comp_id) values (2, 'theather2', null, 2);
+insert into theather(thea_id, thea_name, thea_address, comp_id) values (3, 'theather3', null, 3);
+insert into theather(thea_id, thea_name, thea_address, comp_id) values (4, 'theather4', null, 4);
+insert into theather(thea_id, thea_name, thea_address, comp_id) values (5, 'theather5', null, 5);
+
+-- Test data for room
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (1, 'room1',100, 10000, 1, 1);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (2, 'room2',100, 15000, 1, 1);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (3, 'room3',100, 10300, 1, 1);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (4, 'room4',100, 18000, 2, 2);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (5, 'room5',80, 10000, 2, 2);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (6, 'room6',100, 10000, 2, 2);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (7, 'room7',75, 10000, 3, 3);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (8, 'room8',90, 10000, 3, 3);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (9, 'room9',100, 13000, 3, 3);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (10, 'room10',100, 10000, 4, 4);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (11, 'room11',90, 10000, 4, 4);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (12, 'room12',84, 10000, 4, 4);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (13, 'room13',72, 10000, 5, 5);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (14, 'room14',89, 10000, 5, 5);
+insert into room(room_id, room_name, room_capacity, room_cost, thea_id, comp_id) values (15, 'room15',71, 10000, 5, 5);
+
+-- Test data for show
+insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (1, 'show1', 'genre1', 10000, 1);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (2, 'show2', 'genre2', 10000, 1);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (3, 'show3', 'genre1', 10000, 1);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (4, 'show4', 'genre3', 10000, 2);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (5, 'show5', 'genre2', 10000, 2);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (6, 'show6', 'genre3', 10000, 2);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (7, 'show7', 'genre1', 10000, 3);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (8, 'show8', 'genre2', 10000, 3);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (9, 'show9', 'genre3', 10000, 3);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (10, 'show10', 'genre1', 10000, 4);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (11, 'show11', 'genre2', 10000, 4);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (12, 'show12', 'genre3', 10000, 4);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (13, 'show13', 'genre1', 10000, 5);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (14, 'show14', 'genre2', 10000, 5);
+insert into show(show_id, show_name, show_genre, show_cost, comp_id) values (15, 'show15', 'genre3', 10000, 5);
+
+-- Test data for grant_
+insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id, comp_id) values (1, 'donor1', 'type1', 100000, 5, 12, 1, 1);
+insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id, comp_id) values (2, 'donor2', 'type2', 120000, 0, 6, 1, 1);
+insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id, comp_id) values (3, 'donor3', 'type3', 120000, 0, 3, 1, 1);
+insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id, comp_id) values (4, 'donor4', 'type1', 100000, 5, 12, 2, 2);
+insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id, comp_id) values (5, 'donor5', 'type2', 120000, 0, 4, 2, 2);
+insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id, comp_id) values (6, 'donor6', 'type3', 120000, 0, 3, 2, 2);
+insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id, comp_id) values (7, 'donor7', 'type1', 100000, 5, 12, 3, 3);
+insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id, comp_id) values (8, 'donor8', 'type2', 120000, 0, 4, 3, 3);
+insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id, comp_id) values (9, 'donor9', 'type3', 120000, 0, 3, 4, 4);
+insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id, comp_id) values (10, 'donor10', 'type1', 100000, 5, 12, 5, 5);
+
+-- Test data for performance_
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id, comp_id) values (1, '2018-01-01 00:00:00', '2018-01-01 00:00:00', 'perf1', 100, 1, 1, 1);
+
+
+-- TODO 
+
+-- 2. Create the trigger to check the conflict of the room usage
+
+-- TODO
+
+-- 3. Create the trigger to check the balance of the actor No decreasing.
+
+-- TODO
+
+-- 4. Create the trigger to check the balance of the company Enough money to pay the actor.
+
+-- TODO 
+
+-- Create the trigger to check the reserved sit is not over the capacity of the room
+
+-- Create the trigger to check the room useage is not overlaped.
+
+-- 5. And more to be discussed.
+-- 6. Create the trigger to auto generate the real price of the ticket
+
+-- TODO
+
+-- 7. Create the trigger to auto pay the actor
+
+-- TODO
+
+-- 8. Create the trigger to auto pay the company (ticket price)
+
+-- TODO
+
+-- 10. To be discussed.
