@@ -411,6 +411,17 @@ insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (2, 
 
 -- TODO 
 
+-- Create the trigger to constraint one actor can only be in one performance at the same time
+create trigger actor_in_one_performance
+before insert or update on staff_list
+for each row
+begin
+    if new.act_id in (select act_id from staff_list where perf_id = new.perf_id) then
+        signal sqlstate '45000' set message_text = 'One actor can only be in one performance at the same time';
+    end if;
+end;
+
+
 -- Create the trigger to auto generate the total price of a sale
 create or replace trigger calculate_sales_price
 before insert or update on sales
@@ -690,3 +701,17 @@ insert into sales (sales_id, ticket_type_id, ticket_num,sales_price, sales_time)
 
 
 -- 13. To be discussed.
+
+
+-- Functions 
+-- 1. Create the function to calculate whether a performance do not have enough actors.
+
+-- 2. Create the function to calculate which actor is free for the previous position.
+
+-- 3. Create the function to calculate the free sits for a performance.
+
+-- 4. Create the function to calculate the total sales for a performance.
+
+-- 5. Create the function to calculate the total sales for a theater.
+
+
