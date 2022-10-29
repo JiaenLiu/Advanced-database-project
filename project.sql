@@ -471,6 +471,26 @@ end;
 -- Test the trigger
 insert into transactions (from_comp_id,to_comp_id, to_act_id, thea_id, amount_money) values(1, 2, null, null, 300000);
 
+-- Create the trigger to check the price of ticket should not be changed 
+create or replace trigger ticket_price_check
+before update on ticket
+for each row
+declare 
+    pragma autonomous_transaction;
+    price_error exception;
+begin
+    -- if the ticket's price is changed, then raise an error
+    if (:new.ticket_s_price != :old.ticket_s_price) then 
+        raise price_error;
+    end if;
+exception
+    when price_error then
+    RAISE_APPLICATION_ERROR(-20005, 'The price of the ticket cannot be changed.');
+end;
+
+-- Test the trigger
+update ticket set ticket_s_price = 1000 where ticket_type_id = 1;
+
 -- Create the trigger to change the balance of the company after the transaction.
 create or replace trigger company_balance_change
 after insert on transactions
@@ -492,6 +512,8 @@ insert into transactions (from_comp_id,to_comp_id, to_act_id, thea_id, amount_mo
 select * from company;
 
 -- 5. Create the trigger to check the reserved sit is not over the capacity of the room
+
+-- Jin
 
 -- 6. Create the trigger to check the room useage is not overlaped.
 
