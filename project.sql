@@ -496,7 +496,7 @@ create or replace trigger company_balance_change
 after insert on transactions
 for each row
 declare 
-    pragma autonomous_transaction;
+    -- pragma autonomous_transaction;
     var_from_company_balance number;
     var_to_company_balance number;
     var_actor_balance number;
@@ -515,25 +515,28 @@ select * from company;
 
 -- Jin
 
--- 6. Create the trigger to check the room useage is not overlaped.
+
 
 -- 7. Create the trigger to check the sales date that is not over the performance date.
 
--- 8. Create the sales number is lower the reserved sit.
+-- Jin
+
+-- 8. Create the trigger to check that sales number is lower the reserved sit.
 
 -- 9. And more to be discussed.
 
 -- 10. Create the trigger to auto generate the real price of the ticket
+
 -- Jin
 
 -- TODO
 
 -- 11. Create the trigger to auto pay the actor
-
+-- Jiaen
 -- TODO
 
 -- 12. Create the trigger to auto pay the company (ticket price)
-
+-- Jiaen
 -- TODO
 
 -- 13. To be discussed.
