@@ -543,7 +543,66 @@ insert into transactions (from_comp_id,to_comp_id, to_act_id, thea_id, amount_mo
 insert into transactions (from_comp_id,to_comp_id, to_act_id, thea_id, amount_money) values(1, null, null, 1, 300000); -- Test the donation to theater
 select * from company;
 
--- 5. Create the trigger to check the reserved sits of the performance Enough sits to reserve and do not over the capacity of the room.
+-- Create the trigger to check the reserved sits of the performance Enough sits to reserve and do not over the capacity of the room.
+create or replace trigger count_reserved_sits
+after insert or delete on sales
+for each row
+
+declare
+    nb_sold_sits number;
+    cap_room number;
+    
+begin
+
+    if inserting then
+        select perf1.reserved_sits into nb_sold_sits
+        from performance_ perf1, ticket tick1
+        where tick1.ticket_type_id = :new.ticket_type_id 
+        and tick1.perf_id = perf1.perf_id;
+        
+        select r.room_capacity into cap_room
+        from performance_ perf2, ticket tick2, room r
+        where tick2.ticket_type_id = :new.ticket_type_id 
+        and tick2.perf_id = perf2.perf_id
+        and perf2.room_id = r.room_id;
+    
+        if nb_sold_sits = cap_room then
+            raise_application_error(-20001, 'No more sits available.');
+        elsif nb_sold_sits + :new.ticket_num > cap_room then
+            raise_application_error(-20002, 'Not enough tickets left.');
+        else
+            update performance_
+            set reserved_sits = reserved_sits + :new.ticket_num
+            where perf_id = (
+            select tick.perf_id
+            from ticket tick
+            where tick.ticket_type_id = :new.ticket_type_id);
+        end if;
+    end if;
+        
+    if deleting then
+    
+        select perf1.reserved_sits into nb_sold_sits
+        from performance_ perf1, ticket tick1
+        where tick1.ticket_type_id = :old.ticket_type_id 
+        and tick1.perf_id = perf1.perf_id;
+        
+        select r.room_capacity into cap_room
+        from performance_ perf2, ticket tick2, room r
+        where tick2.ticket_type_id = :old.ticket_type_id 
+        and tick2.perf_id = perf2.perf_id
+        and perf2.room_id = r.room_id;
+    
+        insert into refund values (:old.sales_id, :old.sales_price);
+        update performance_
+        set reserved_sits = reserved_sits - :old.ticket_num
+        where perf_id = (
+        select tick.perf_id
+        from ticket tick
+        where tick.ticket_type_id = :old.ticket_type_id);
+    end if;
+end;
+/
 
 
 -- 7. Create the trigger to check the sales date that is not over the performance date.
