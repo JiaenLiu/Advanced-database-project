@@ -262,7 +262,7 @@ create table transactions
     constraint fk_t_from_comp_id foreign key (from_comp_id) references company(comp_id),
     constraint fk_t_to_comp_id foreign key (to_comp_id) references company(comp_id),
     constraint fk_t_to_act_id foreign key (to_act_id) references actor(act_id),
-    constraint fk_t_thea_id foreign key (thea_id) references theather(thea_id),
+    constraint fk_t_thea_id foreign key (thea_id) references theater(thea_id),
     constraint gz_amount_money check (amount_money > 0)
 );
 
@@ -405,16 +405,91 @@ insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (2, 
 -- TODO 
 
 -- 2. Create the trigger to check the conflict of the room usage
+create or replace trigger room_usage_check 
+before insert or update on performance_
+for each row
+declare 
+    pragma autonomous_transaction;
+    useage_error exception;
+    var_same_begin_time_count number;
+begin
+    -- if the performance is not inserted, then check the conflict of the room usage.
+    -- if room_id is same and there are exist shows' begin time in the new show's time, then raise an error
+    select count(*) into var_same_begin_time_count from performance_ where room_id = :new.room_id and perf_begin between :new.perf_begin and :new.perf_end; 
+    if (var_same_begin_time_count != 0) then 
+        raise useage_error;
+    end if;
+exception
+    when useage_error then 
+    RAISE_APPLICATION_ERROR(-20002, 'This room is occupied.');
+end;
 
--- TODO
+-- Test the trigger
+insert into performance_(perf_id, perf_begin, perf_end, reserved_sits, room_id,show_id, discount) values (16, '20/09/2022 19:30:00', '20/09/2022 21:30:00', 100, 1, 1, 0);
 
--- 3. Create the trigger to check the balance of the actor No decreasing.
+-- 3. Create the trigger to check the price of the actor No decreasing.
 
--- TODO
+create or replace trigger actor_price_check
+before update on actor
+for each row
+declare 
+    pragma autonomous_transaction;
+    price_error exception;
+begin
+    -- if the actor's price is decreased, then raise an error
+    if (:new.act_price < :old.act_price) then 
+        raise price_error;
+    end if;
+exception
+    when price_error then
+    RAISE_APPLICATION_ERROR(-20003, 'The price of the actor cannot be decreased.');
+end;
 
--- 4. Create the trigger to check the balance of the company Enough money to pay the actor.
+-- Test the trigger
+update actor set act_price = 9000 where act_id = 1;
 
--- TODO 
+-- 4. Create the trigger to check the balance of the company Enough money to pay the others.
+
+create or replace trigger company_balance_check
+before insert on transactions
+for each row
+declare 
+    pragma autonomous_transaction;
+    balance_error exception;
+    var_company_balance number;
+begin
+    -- if the company's balance is not enough to pay the actor, then raise an error
+    select act_balance into var_company_balance from company where comp_id = :new.from_comp_id;
+    if (var_company_balance < :new.amount_money) then 
+        raise balance_error;
+    end if;
+exception
+    when balance_error then
+    RAISE_APPLICATION_ERROR(-20004, 'The balance of the company is not enough to pay this transaction.');
+end;
+
+-- Test the trigger
+insert into transactions (from_comp_id,to_comp_id, to_act_id, thea_id, amount_money) values(1, 2, null, null, 300000);
+
+-- Create the trigger to change the balance of the company after the transaction.
+create or replace trigger company_balance_change
+after insert on transactions
+for each row
+declare 
+    pragma autonomous_transaction;
+    var_from_company_balance number;
+    var_to_company_balance number;
+    var_actor_balance number;
+begin
+    -- after the transaction, the balance of the company is changed.
+    select comp_balance into var_from_company_balance from company where comp_id = :new.from_comp_id;
+    select comp_balance into var_to_company_balance from company where comp_id = :new.to_comp_id;
+    update company set comp_balance = var_from_company_balance - :new.amount_money where comp_id = :new.from_comp_id;
+    update company set comp_balance = var_to_company_balance + :new.amount_money where comp_id = :new.to_comp_id;
+end;
+-- Test the trigger
+insert into transactions (from_comp_id,to_comp_id, to_act_id, thea_id, amount_money) values(1, 2, null, null, 300000);
+select * from company;
 
 -- 5. Create the trigger to check the reserved sit is not over the capacity of the room
 
