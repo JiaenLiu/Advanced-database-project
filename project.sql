@@ -1,6 +1,6 @@
 -- This file is written by Jiaen LIU and Jin-Young BAE and only for the Advanced databases' project.
 
-ALTER SESSION SET NLS_DATE_FORMAT = 'DD/MM/YYYY HH:MI:SS';
+ALTER SESSION SET NLS_DATE_FORMAT = 'DD/MM/YYYY HH24:MI:SS';
 
 -- Oracle does not support constraints and defaults in type specifications. However, you can specify the constraints and defaults when creating the tables:
 -- From https://docs.oracle.com/en/database/oracle/oracle-database/18/adobj/constraints-on-objects.html#GUID-7191723A-4956-406B-A527-E2A4C288AE04
@@ -233,7 +233,6 @@ create table sales (
     constraint pk_sales_id primary key(sales_id),
     --constraint nn_ticket_type check(ticket_type in ('normal', 'reduced')),
     constraint nn_ticket_num check (ticket_num is not null),
-    constraint nn_sales_price check (sales_price is not null),
     constraint nn_sales_time check (sales_time is not null),
     constraint fk_s_ticket_type_id foreign key (ticket_type_id) references ticket(ticket_type_id)
 );
@@ -277,18 +276,18 @@ desc transactions;
 -- 1. Fill the tables with some test data
 
 -- Test data for company
-insert into company(comp_id, comp_name, comp_balance, comp_address, thea_id) values (1, 'company1', 3000000, null, 1);
-insert into company(comp_id, comp_name, comp_balance, comp_address, thea_id) values (2, 'company2', 3000000, null, 2);
-insert into company(comp_id, comp_name, comp_balance, comp_address, thea_id) values (3, 'company3', 3000000, null, 3);
-insert into company(comp_id, comp_name, comp_balance, comp_address, thea_id) values (4, 'company4', 3000000, null, 4);
-insert into company(comp_id, comp_name, comp_balance, comp_address, thea_id) values (5, 'company5', 3000000, null, 5);
+insert into company(comp_id, comp_name, comp_balance, comp_address) values (1, 'company1', 3000000, null);
+insert into company(comp_id, comp_name, comp_balance, comp_address) values (2, 'company2', 3000000, null);
+insert into company(comp_id, comp_name, comp_balance, comp_address) values (3, 'company3', 3000000, null);
+insert into company(comp_id, comp_name, comp_balance, comp_address) values (4, 'company4', 3000000, null);
+insert into company(comp_id, comp_name, comp_balance, comp_address) values (5, 'company5', 3000000, null);
 
 -- Test data for theather
-insert into theather(thea_id, thea_name, thea_address, comp_id) values (1, 'theather1', null, 1);
-insert into theather(thea_id, thea_name, thea_address, comp_id) values (2, 'theather2', null, 2);
-insert into theather(thea_id, thea_name, thea_address, comp_id) values (3, 'theather3', null, 3);
-insert into theather(thea_id, thea_name, thea_address, comp_id) values (4, 'theather4', null, 4);
-insert into theather(thea_id, thea_name, thea_address, comp_id) values (5, 'theather5', null, 5);
+insert into theater(thea_id, thea_name, thea_address, comp_id) values (1, 'theater1', null, 1);
+insert into theater(thea_id, thea_name, thea_address, comp_id) values (2, 'theater2', null, 2);
+insert into theater(thea_id, thea_name, thea_address, comp_id) values (3, 'theater3', null, 3);
+insert into theater(thea_id, thea_name, thea_address, comp_id) values (4, 'theater4', null, 4);
+insert into theater(thea_id, thea_name, thea_address, comp_id) values (5, 'theater5', null, 5);
 
 -- Test data for room
 insert into room(room_id, room_name, room_capacity, room_cost, thea_id) values (1, 'room1',100, 10000, 1);
@@ -337,21 +336,21 @@ insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_
 insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id) values (10, 'donor10', 'type1', 100000, 5, 12, 5);
 
 -- Test data for performance_
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (1, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf1', 100, 1, 1,1, 0);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (2, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf2', 100, 2, 1,1, 0);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (3, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf3', 100, 3, 1,1, 0);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (4, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf4', 80, 1, 2, 1, 1);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (5, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf5', 100, 2, 2,2, 1);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (6, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf6', 75, 3, 2,3, 1);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (7, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf7', 100, 1, 3,4, 0);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (8, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf8', 90, 2, 3,5,0 );
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (9, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf9', 100, 3, 3,6,1);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (10, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf10', 100, 1, 4,7,0);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (11, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf11', 90, 2, 4,8,1);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (12, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf12', 84, 3, 4,9,0);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (13, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf13', 72, 1, 5,10,0);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (14, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf14', 89, 2, 5,11,1);
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id, discount) values (15, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf15', 71, 3, 5,12,1);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id,show_id, discount) values (1, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf1', 100, 1, 1, 0);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id,show_id, discount) values (2, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf2', 100, 2, 1, 0);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id,show_id, discount) values (3, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf3', 100, 3, 1, 0);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id,show_id, discount) values (4, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf4', 80, 1, 1, 1);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id,show_id, discount) values (5, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf5', 100, 2, 2, 1);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id,show_id, discount) values (6, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf6', 75, 3, 3, 1);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id,show_id, discount) values (7, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf7', 100, 1, 4, 0);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id,show_id, discount) values (8, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf8', 90, 2, 5,0 );
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id,show_id, discount) values (9, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf9', 100, 3, 6,1);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id,show_id, discount) values (10, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf10', 100, 1, 7,0);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id,show_id, discount) values (11, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf11', 90, 2, 8,1);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id,show_id, discount) values (12, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf12', 84, 3, 9,0);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id,show_id, discount) values (13, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf13', 72, 1, 10,0);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id,show_id, discount) values (14, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf14', 89, 2, 11,1);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id,show_id, discount) values (15, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf15', 71, 3, 12,1);
 
 -- Test data for actor
 insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(1, 'actor1', 10000, 'M', 'type1', 20, 100000);
@@ -369,7 +368,6 @@ insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_b
 insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(13, 'actor13', 29000, 'F', 'type2', 30, 100000);
 
 -- Test data for staff_list
-
 insert into staff_list (perf_id, act_id) values (1, 1);
 insert into staff_list (perf_id, act_id) values (1, 2);
 insert into staff_list (perf_id, act_id) values (1, 3);
@@ -385,22 +383,23 @@ insert into staff_list (perf_id, act_id) values (4, 12);
 insert into staff_list (perf_id, act_id) values (5, 13);
 
 -- Test data for ticket
-insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (1, 'R', 200, 1);
-insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (2, 'S', 500, 2);
-insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (3, 'A', 700, 3);
-insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (4, 'R', 800, 4);
-insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (5, 'S', 900, 5);
-insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (6, 'A', 1000, 6);
-insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (7, 'R', 1100, 7);
-insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (8, 'S', 1200, 8);
-insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (9, 'A', 1300, 9);
-insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (10, 'R', 1400, 10);
-insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (11, 'S', 1500, 11);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (1, 'normal', 1000, 1);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (2, 'reduced', 500, 1);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (3, 'normal', 1500, 2);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (4, 'reduced', 900, 2);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (5, 'normal', 900, 3);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (6, 'reduced', 700, 3);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (7, 'normal', 1000, 4);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (8, 'reduced', 720, 4);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (9, 'normal', 1300, 5);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (10, 'reduced', 1000, 5);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (11, 'normal', 1500, 6);
+insert into ticket (ticket_type_id, ticket_type, ticket_s_price, perf_id) values (12, 'reduced', 1200, 6);
 
 
 -- Test data for sales
-insert into sales (sales_id, ticket_type_id, ticket_num, sales_price, sales_time) values (1, 1, 10, 10000, '18/09/2022 19:30:33');
-insert into sales (sales_id, ticket_type_id, ticket_num, sales_price, sales_time) values (2, 2, 10, 10000, '18/09/2022 19:30:33');
+insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (1, 1, 10, '18/09/2022 19:30:33');
+insert into sales (sales_id, ticket_type_id, ticket_num, sales_time) values (2, 2, 10, '18/09/2022 19:30:33');
 
 -- Test data for transaction_
 
