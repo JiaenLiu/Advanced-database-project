@@ -182,7 +182,11 @@ create table staff_list
     act_id number not null,
     room_id number not null,
     thea_id number not null,
-    constraint pk_staff_list primary key(perf_id, act_id)
+    constraint pk_staff_list primary key(perf_id, act_id),
+    constraint fk_sl_perf_id foreign key (perf_id) references performance_(perf_id),
+    constraint fk_sl_act_id foreign key (act_id) references actor(act_id),
+    constraint fk_sl_room_id foreign key (room_id) references room(room_id),
+    constraint fk_sl_thea_id foreign key (thea_id) references theather(thea_id)
 );
 
 desc staff_list;
@@ -299,8 +303,54 @@ insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_
 insert into grant_(grant_id, donor_name, grant_type, total_amount, total_period_year, period_time_month, thea_id, comp_id) values (10, 'donor10', 'type1', 100000, 5, 12, 5, 5);
 
 -- Test data for performance_
-insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id, comp_id) values (1, '2018-01-01 00:00:00', '2018-01-01 00:00:00', 'perf1', 100, 1, 1, 1);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (1, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf1', 100, 1, 1,1);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (2, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf2', 100, 2, 1,1);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (3, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf3', 100, 3, 1,1);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (4, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf4', 80, 1, 2,1);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (5, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf5', 100, 2, 2,2);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (6, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf6', 75, 3, 2,3);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (7, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf7', 100, 1, 3,4);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (8, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf8', 90, 2, 3,5);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (9, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf9', 100, 3, 3,6);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (10, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf10', 100, 1, 4,7);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (11, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf11', 90, 2, 4,8);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (12, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf12', 84, 3, 4,9);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (13, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf13', 72, 1, 5,10);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (14, '20/09/2022 19:30:33', '20/09/2022 21:30:33', 'perf14', 89, 2, 5,11);
+insert into performance_(perf_id, perf_begin, perf_end, perf_name, reserved_sits, room_id, thea_id,show_id) values (15, '20/09/2022 19:30:33', '20/09/2022 21:30:33', '71', 100, 3, 5,12);
 
+-- Test data for actor
+insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(1, 'actor1', 10000, 'M', 'type1', 20, 100000);
+insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(2, 'actor2', 10000, 'F', 'type2', 30, 100000);
+insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(3, 'actor3', 20000, 'M', 'type3', 35, 120000);
+insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(4, 'actor4', 10000, 'F', 'type2', 30, 100000);
+insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(5, 'actor5', 10000, 'F', 'type2', 30, 100000);
+insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(6, 'actor6', 10000, 'F', 'type2', 30, 100000);
+insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(7, 'actor7', 10000, 'F', 'type2', 59, 100000);
+insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(8, 'actor8', 10000, 'F', 'type2', 23, 100000);
+insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(9, 'actor9', 10000, 'F', 'type2', 40, 100000);
+insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(10, 'actor10', 40000, 'F', 'type2', 30, 100000);
+insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(11, 'actor11', 30000, 'F', 'type2', 30, 100000);
+insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(12, 'actor12', 18000, 'F', 'type2', 30, 100000);
+insert into actor (act_id, act_name, act_price, gender, act_type, act_age, act_balance) values(13, 'actor13', 29000, 'F', 'type2', 30, 100000);
+
+-- Test data for staff_list
+
+insert into staff_list (perf_id, act_id ,room_id, thea_id) values (1, 1, 1, 1);
+insert into staff_list (perf_id, act_id ,room_id, thea_id) values (1, 2, 1, 1);
+insert into staff_list (perf_id, act_id ,room_id, thea_id) values (1, 3, 1, 1);
+insert into staff_list (perf_id, act_id ,room_id, thea_id) values (2, 4, 2, 1);
+insert into staff_list (perf_id, act_id ,room_id, thea_id) values (2, 5, 2, 1);
+insert into staff_list (perf_id, act_id ,room_id, thea_id) values (2, 6, 2, 1);
+insert into staff_list (perf_id, act_id ,room_id, thea_id) values (3, 7, 3, 1);
+insert into staff_list (perf_id, act_id ,room_id, thea_id) values (3, 8, 3, 1);
+insert into staff_list (perf_id, act_id ,room_id, thea_id) values (3, 9, 3, 1);
+insert into staff_list (perf_id, act_id ,room_id, thea_id) values (4, 10, 1, 2);
+insert into staff_list (perf_id, act_id ,room_id, thea_id) values (4, 11, 1, 2);
+insert into staff_list (perf_id, act_id ,room_id, thea_id) values (4, 12, 1, 2);
+insert into staff_list (perf_id, act_id ,room_id, thea_id) values (5, 13, 2, 2);
+
+-- 
 
 -- TODO 
 
