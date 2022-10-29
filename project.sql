@@ -26,7 +26,6 @@ create table company
     comp_name varchar2(30),
     comp_balance number,
     comp_address address_type,
-    -- thea_id number,
     constraint pk_comp_id primary key (comp_id),
     constraint nn_comp_name check (comp_name is not null),
     constraint nn_comp_balance check (comp_balance is not null)
@@ -117,12 +116,12 @@ create table performance_
     perf_id number,
     perf_begin date, -- The timestamp string like 20/09/2022 19:30:33
     perf_end date, -- The timestamp string
-    perf_name varchar2(20),
+    -- perf_name varchar2(20),
     reserved_sits number,
     room_id number not null,
     -- thea_id number not null,
     show_id number not null,
-    discount number,
+    discount number(1),
     constraint pk_perf_id primary key(perf_id),
     constraint nn_perf_begin check (perf_begin is not null),
     constraint nn_perf_end check (perf_end is not null),
@@ -214,7 +213,7 @@ create table ticket (
     constraint pk_ticket_type_id primary key(ticket_type_id),
     constraint nn_ticket_type check(ticket_type in ('normal', 'reduced')),
     constraint nn_ticket_s_price check (ticket_s_price is not null),
-    constraint fk_t_perf_id foreign key (perf_id) references performance_(perf_id),
+    constraint fk_t_perf_id foreign key (perf_id) references performance_(perf_id)
     -- constraint fk_t_thea_id foreign key (thea_id) references theather(thea_id),
     -- constraint fk_t_room_id foreign key (room_id) references room(room_id)
 );
@@ -269,7 +268,7 @@ create table transactions
     constraint gz_amount_money check (amount_money > 0)
 );
 
-desc transaction_;
+desc transactions;
 -- Another solution:
 -- We make all the meta-table (show, performance and actor) into class and object. 
 -- Using these objects to create the table of them and store them in the transaction table.
