@@ -491,7 +491,7 @@ end;
 -- Test the trigger
 update ticket set ticket_s_price = 1000 where ticket_type_id = 1;
 
--- Create the trigger to change the balance of the company after the transaction.
+-- Create the trigger to change the balance of the company,actor and theater's company after the transaction.
 create or replace trigger company_balance_change
 after insert on transactions
 for each row
@@ -500,15 +500,39 @@ declare
     var_from_company_balance number;
     var_to_company_balance number;
     var_actor_balance number;
+    var_theater_company_balance number;
+    var_theater_company_id number;
+    invalid_input exception;
 begin
     -- after the transaction, the balance of the company is changed.
-    select comp_balance into var_from_company_balance from company where comp_id = :new.from_comp_id;
-    select comp_balance into var_to_company_balance from company where comp_id = :new.to_comp_id;
-    update company set comp_balance = var_from_company_balance - :new.amount_money where comp_id = :new.from_comp_id;
-    update company set comp_balance = var_to_company_balance + :new.amount_money where comp_id = :new.to_comp_id;
+
+    if ((:new.from_comp_id is not null) and (:new.to_comp_id is not null)) then 
+        select comp_balance into var_from_company_balance from company where comp_id = :new.from_comp_id;
+        select comp_balance into var_to_company_balance from company where comp_id = :new.to_comp_id;
+        update company set comp_balance = var_from_company_balance - :new.amount_money where comp_id = :new.from_comp_id;
+        update company set comp_balance = var_to_company_balance + :new.amount_money where comp_id = :new.to_comp_id;
+    elsif (:new.from_comp_id is not null) and (:new.to_act_id is not null) then 
+        select comp_balance into var_from_company_balance from company where comp_id = :new.from_comp_id;
+        select act_balance into var_actor_balance from actor where act_id = :new.to_act_id;
+        update company set comp_balance = var_from_company_balance - :new.amount_money where comp_id = :new.from_comp_id;
+        update actor set act_balance = var_actor_balance + :new.amount_money where act_id = :new.to_act_id;
+    elsif (:new.from_comp_id is not null) and (:new.thea_id is not null) then
+        select comp_id into var_theater_company_id from theater where thea_id = :new.thea_id;
+        select comp_balance into var_theater_company_balance from company where comp_id = var_theater_company_id;
+        update company set comp_balance = var_theater_company_balance + :new.amount_money where comp_id = :new.from_comp_id;
+        DBMS_OUTPUT.PUT_LINE('The balance of the theater company is changed.');
+    else
+        raise invalid_input;
+    end if;
+exception
+    when invalid_input then
+    RAISE_APPLICATION_ERROR(-20006, 'The input is invalid. only from_comp_id and to_comp_id or from_comp_id and to_act_id or from_comp_id and thea_id can be used.');
+
 end;
 -- Test the trigger
-insert into transactions (from_comp_id,to_comp_id, to_act_id, thea_id, amount_money) values(1, 2, null, null, 300000);
+insert into transactions (from_comp_id,to_comp_id, to_act_id, thea_id, amount_money) values(1, 2, null, null, 300000); -- Test the company to company
+insert into transactions (from_comp_id,to_comp_id, to_act_id, thea_id, amount_money) values(1, null, 1, null, 300000); -- Test the company to actor
+insert into transactions (from_comp_id,to_comp_id, to_act_id, thea_id, amount_money) values(1, null, null, 1, 300000); -- Test the donation to theater
 select * from company;
 
 -- 5. Create the trigger to check the reserved sit is not over the capacity of the room
